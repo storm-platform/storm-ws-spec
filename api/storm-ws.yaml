@@ -9,9 +9,9 @@ info:
 
     version: '0.1'
     contact:
-        name: Felipe Menino Carlos
+        name: Brazil Data Cube Team
         url: 'https://discord.com/channels/689541907621085198#'
-        email: felipe.carlos@inpe.br
+        email: brazildatacube@inpe.br
 
     license:
         name: MIT
@@ -27,30 +27,6 @@ paths:
             responses:
                 '200':
                     $ref: '#/components/responses/Root'
-
-    #
-    # Server
-    #
-    /ping:
-        get:
-            tags:
-                - Server
-            summary: Ping the server
-            description: Ping the server with an HTTP request
-            responses:
-                '200':
-                    description: 'Pong!'
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    code:
-                                        type: integer
-                                        example: 200
-                                    message:
-                                        type: string
-                                        example: 'Pong!'
 
     #
     # Project
@@ -186,7 +162,7 @@ paths:
                 '404':
                     $ref: '#/components/responses/Error'
 
-    /projects/{project_id}/pipelines/{pipeline_id}/actions/remove/compendium/{compendium_id}:
+    /projects/{project_id}/pipelines/{pipeline_id}/actions/delete/compendium/{compendium_id}:
         parameters:
             -   $ref: '#/components/parameters/compendium_id'
             -   $ref: '#/components/parameters/project_id'
@@ -516,8 +492,18 @@ paths:
                     description: Deleted
 
     #
-    # User Execution Compendium (Published or drafts)
+    # User Workspace (Projects and Compendia)
     #
+    /user/projects/:
+        get:
+            tags:
+                - User workspace
+            summary: Get all projects created by the user
+            description: Get all projects created by the user
+            responses:
+                '200':
+                    $ref: '#/components/responses/ListOfProjectCreatedModelResponseBody'
+
     /user/projects/{project_id}/compendia:
         parameters:
             -   $ref: '#/components/parameters/project_id'
@@ -525,8 +511,8 @@ paths:
         get:
             tags:
                 - User workspace
-            summary: List all execution compendia (Draft and Published) created by the user in the defined project.
-            description: List all execution compendia (Draft and Published) created by the user in the defined project.
+            summary: List all compendia (Draft and Published) created by the user.
+            description: List all compendia (Draft and Published) created by the user in the defined project.
             responses:
                 '200':
                     $ref: '#/components/responses/ListOfExecutionCompendiumModelResponseBody'
@@ -577,7 +563,7 @@ components:
             properties:
                 application_name:
                     type: string
-                    example: 'Brazil Data Cube Reproducible Research Management'
+                    example: 'SpatioTemporal Open Research Manager'
                     description: 'Application name'
                 version:
                     type: string
@@ -792,8 +778,7 @@ components:
         # Files
         ExecutionCompendiumFileMetadataModel:
             title: Execution Compendium document
-            description: |
-                'JSON document with information about a commited file.'
+            description: 'JSON document with information about a commited file.'
             type: object
             properties:
                 size:
