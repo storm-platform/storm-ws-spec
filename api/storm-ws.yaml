@@ -9,13 +9,17 @@ info:
 
     version: '0.1'
     contact:
-        name: Brazil Data Cube Team
-        url: 'https://discord.com/channels/689541907621085198#'
-        email: brazildatacube@inpe.br
+        name: Felipe Carlos
+        email: efelipecarlos@gmail.com
 
     license:
         name: MIT
         url: 'https://opensource.org/licenses/MIT'
+
+    x-logo:
+        url: ../assets/logo-storm.png
+        altText: Storm Platform web site
+        href: 'https://storm-platform.github.io'
 
 paths:
     /:
