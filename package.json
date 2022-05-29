@@ -4,11 +4,11 @@
   "description": "SpatioTemporal Open Research Manager Web Service - Specification",
   "main": "index.js",
   "scripts": {
-    "build": "redoc-cli bundle api/storm-ws.yaml --output dist/index.html"
+    "build": "redoc-cli build api/storm-ws.yaml --output dist/index.html"
   },
   "author": "Felipe Menino Carlos",
   "license": "MIT",
   "dependencies": {
-    "redoc-cli": "^0.13.0"
+    "redoc-cli": "^0.13.14"
   }
 }
