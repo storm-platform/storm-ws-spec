@@ -2,1091 +2,2804 @@ openapi: 3.0.0
 
 info:
 
-    title: SpatioTemporal Open Research Manager Web Service
+  title: SpatioTemporal Open Research Manager Web Service
 
-    description: |
-        SpatioTemporal Open Research Manager Web Service is designed to enhance reproducible research collaboratively.
+  description: |
+    SpatioTemporal Open Research Manager Web Service is designed to enhance reproducible research collaboratively.
 
-    version: '0.1'
-    contact:
-        name: Felipe Carlos
-        email: efelipecarlos@gmail.com
+  version: '0.1.0'
+  contact:
+    name: Felipe Carlos
+    email: felipe.carlos@inpe.br
 
-    license:
-        name: MIT
-        url: 'https://opensource.org/licenses/MIT'
+  license:
+    name: MIT
+    url: 'https://opensource.org/licenses/MIT'
 
-    x-logo:
-        url: ../assets/logo-storm.png
-        altText: Storm Platform web site
-        href: 'https://storm-platform.github.io'
+  x-logo:
+    url: ../assets/logo-storm.png
+    altText: Storm Platform web site
+    href: 'https://storm-platform.github.io'
 
 paths:
-    /:
-        get:
-            tags:
-                - Root
-            summary: Root entrypoint
-            description: Returns the root entrypoint in the service
-            responses:
-                '200':
-                    $ref: '#/components/responses/Root'
+  /:
+    get:
+      tags:
+        - Root
+      summary: Root entrypoint
+      description: Returns the root entrypoint in the service
+      responses:
+        '200':
+          $ref: '#/components/responses/Root'
 
-    #
-    # Project
-    #
-    /projects/:
-        get:
-            tags:
-                - Research Project
-            summary: Get all projects available for the user
-            description: Get all projects available for the user
-            responses:
-                '200':
-                    $ref: '#/components/responses/ListOfProjectCreatedModelResponseBody'
+  #
+  # Research Project
+  #
+  /projects/:
+    get:
+      tags:
+        - Research Project
+      summary: Search projects
+      description: |
+        Retrieve all projects available for the user authenticated. Only projects 
+        where the authenticated user has owner or collaborator roles will be presented 
+        in the search result.
+      parameters:
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/size'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/allversions'
+        - $ref: '#/components/parameters/accept'
 
-        post:
-            tags:
-                - Research Project
-            summary: Create a new Research Project
-            description: Create a new Research Project
+      responses:
+        '200':
+          $ref: '#/components/responses/ListOfProjectCreatedModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
 
-            requestBody:
-                $ref: '#/components/requestBodies/ProjectDefinitionModelRequestBody'
+    post:
+      tags:
+        - Research Project
+      summary: Create a new Research Project
+      description: Create a new Research Project
 
-            responses:
-                '201':
-                    $ref: '#/components/responses/ProjectCreatedModelResponseBody'
+      requestBody:
+        $ref: '#/components/requestBodies/ProjectDefinitionModelRequestBody'
 
-    /projects/{project_id}:
-        parameters:
-            -   $ref: '#/components/parameters/project_id'
+      responses:
+        '201':
+          $ref: '#/components/responses/ProjectCreatedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
 
-        get:
-            tags:
-                - Research Project
-            summary: Get a specific project
-            description: Get a specific project if it is available for the current user
-            responses:
-                '200':
-                    $ref: '#/components/responses/ListOfProjectCreatedModelResponseBody'
+  /projects/{project_id}:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
 
-        put:
-            tags:
-                - Research Project
-            summary: Edit a project
-            description: Edit a specific project if it is available for the current user
-            requestBody:
-                $ref: '#/components/requestBodies/ProjectDefinitionModelRequestBody'
-            responses:
-                '200':
-                    $ref: '#/components/responses/ListOfProjectCreatedModelResponseBody'
+    get:
+      tags:
+        - Research Project
+      summary: Read a project
+      description: Retrieve metadata of the project.
+      responses:
+        '200':
+          $ref: '#/components/responses/ProjectCreatedModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
 
-        delete:
-            tags:
-                - Research Project
-            summary: Delete a project
-            description: Delete a project if user is admin
-            responses:
-                '200':
-                    description: Deleted
+    put:
+      tags:
+        - Research Project
+      summary: Edit a project
+      description: Edit a specific project if it is available for the current user
+      requestBody:
+        $ref: '#/components/requestBodies/ProjectDefinitionModelRequestBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/ProjectCreatedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
 
-    #
-    # Research pipeline
-    #
-    /projects/{project_id}/pipelines:
-        parameters:
-            -   $ref: '#/components/parameters/project_id'
+    delete:
+      tags:
+        - Research Project
+      summary: Delete a project
+      description: Delete a project if user has owner role.
+      responses:
+        '200':
+          description: Deleted
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
 
-        get:
-            tags:
-                - Research Pipeline
-            summary: List all research pipelines associated to the project
-            description: List all ResearchPipelines.
-            responses:
-                '200':
-                    $ref: '#/components/responses/ListOfProjectPipelineModelResponseBody'
-                '404':
-                    $ref: '#/components/responses/Error'
+  # Base actions
+  /projects/{project_id}/actions/finish:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
 
-        post:
-            tags:
-                - Research Pipeline
-            summary: Create a new Research pipeline
-            description: Create a new Research Pipeline and associate it to the defined Project.
-            requestBody:
-                $ref: '#/components/requestBodies/ProjectDefinitionModelRequestBody'
-            responses:
-                '200':
-                    $ref: '#/components/responses/ProjectPipelineModelResponseBody'
-                '404':
-                    $ref: '#/components/responses/Error'
+    post:
+      tags:
+        - Research Project (Actions)
+      summary: Finish a project
+      description: |
+        Closes the Project activity and freezes the available content. After the project is finished,
+        any other operation can't be performed in the project content.
+      responses:
+        '200':
+          $ref: '#/components/responses/ProjectCreatedModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
 
-    /projects/{project_id}/pipelines/{pipeline_id}:
-        parameters:
-            -   $ref: '#/components/parameters/project_id'
-            -   $ref: '#/components/parameters/pipeline_id'
+  # Admin actions
+  /projects/{project_id}/admin/actions/add/contributor/{agent_id}:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+      - $ref: '#/components/parameters/agent_id'
 
-        get:
-            tags:
-                - Research Pipeline
-            summary: Describe a specific Research pipeline.
-            description: Get all informations that related to a specific Project Research Pipeline.
-            responses:
-                '200':
-                    $ref: '#/components/responses/ProjectPipelineModelResponseBody'
-                '404':
-                    $ref: '#/components/responses/Error'
+    post:
+      tags:
+        - Research Project (Administration Actions)
+      summary: Add a contributor to the project
+      description: |
+        Add a user to collaborate with the project content. A contributor 
+        can create Compendia and Workflows inside the project context.
+      responses:
+        '200':
+          $ref: '#/components/responses/ProjectCreatedModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
 
-        delete:
-            tags:
-                - Research Pipeline
-            summary: Delete a Research Pipeline
-            description: Delete a Research Pipeline from a specific project.
-            responses:
-                '200':
-                    description: Deleted
-                '404':
-                    $ref: '#/components/responses/Error'
+    delete:
+      tags:
+        - Research Project (Administration Actions)
+      summary: Remove a contributor from the project
+      description: |
+        Remove a user collaborator from the project.
+      responses:
+        '200':
+          $ref: '#/components/responses/ProjectCreatedModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
 
-    /projects/{project_id}/pipelines/{pipeline_id}/actions/add/compendium/{compendium_id}:
-        parameters:
-            -   $ref: '#/components/parameters/compendium_id'
-            -   $ref: '#/components/parameters/project_id'
-            -   $ref: '#/components/parameters/pipeline_id'
+  /projects/{project_id}/admin/actions/add/owner/{agent_id}:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+      - $ref: '#/components/parameters/agent_id'
 
-        post:
-            tags:
-                - Research Pipeline
-            summary: Create a new Execution Compendium in the Research Pipeline.
-            description: Add an already published Execution Compendium to the Research Pipeline
-            responses:
-                '200':
-                    $ref: '#/components/responses/ProjectPipelineModelResponseBody'
-                '404':
-                    $ref: '#/components/responses/Error'
+    post:
+      tags:
+        - Research Project (Administration Actions)
+      summary: Make a user owner of the project
+      description: |
+        Add a user as an owner of the project. An owner can do anything inside the 
+        project context (e.g., Create content and finish the project).
+      responses:
+        '200':
+          $ref: '#/components/responses/ProjectCreatedModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
 
-    /projects/{project_id}/pipelines/{pipeline_id}/actions/delete/compendium/{compendium_id}:
-        parameters:
-            -   $ref: '#/components/parameters/compendium_id'
-            -   $ref: '#/components/parameters/project_id'
-            -   $ref: '#/components/parameters/pipeline_id'
+    delete:
+      tags:
+        - Research Project (Administration Actions)
+      summary: Remove a project owner
+      description: |
+        Remove a user from the list of owners.
+      responses:
+        '200':
+          $ref: '#/components/responses/ProjectCreatedModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
 
-        delete:
-            tags:
-                - Research Pipeline
-            summary: Delete a Execution Compendium from Research Pipeline.
-            description: Delete a Execution Compendium from Research Pipeline of a given Project.
-            responses:
-                '200':
-                    description: Deleted
-                '404':
-                    $ref: '#/components/responses/Error'
+  /projects/{project_id}/admin/agents:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
 
-    #
-    # Execution Compendium
-    #
-    /projects/{project_id}/compendia:
-        parameters:
-            -   $ref: '#/components/parameters/project_id'
+    post:
+      tags:
+        - Research Project (Administration Actions)
+      summary: List the project agents
+      description: |
+        Retrieve a list of all agents (Collaborators and Owners) registered in the selected project.
+      responses:
+        '200':
+          $ref: '#/components/responses/ProjectAgentResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
 
-        get:
-            tags:
-                - Execution Compendium
-            summary: List all nodes associades to the project
-            description: List all Project Nodes, and their versions.
-            responses:
-                '200':
-                    $ref: '#/components/responses/ListOfExecutionCompendiumModelResponseBody'
-                '404':
-                    $ref: '#/components/responses/Error'
+  #
+  # Execution Compendium (Draft)
+  #
+  /projects/{project_id}/compendia:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
 
+    # exception: To search published execution compendia, the user use the root endpoint (`/compendia`).
+    #            > We made this to make the search more easier.
+    get:
+      tags:
+        - Execution Compendium (Published)
+      summary: Search execution compendia.
+      description: |
+        Retrieve all execution compendia published inside the project.
+      responses:
+        '200':
+          $ref: '#/components/responses/ListOfExecutionCompendiumPublishedModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
 
-    /projects/{project_id}/compendia/{compendium_id}:
-        parameters:
-            -   $ref: '#/components/parameters/project_id'
-            -   $ref: '#/components/parameters/compendium_id'
+    post:
+      tags:
+        - Execution Compendium (Draft)
+      summary: Create a new Execution Compendium draft.
+      description: |
+        Create a new Execution Compendium draft inside the project. Only the 
+        user working in the compendium can manage it.
+      requestBody:
+        $ref: '#/components/requestBodies/ExecutionCompendiumDraftRequestBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/ExecutionCompendiumDraftModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
 
-        get:
-            tags:
-                - Execution Compendium
-            summary: List all execution compendia associades to the project.
-            description: List all execution compendia, and their versions.
-            responses:
-                '200':
-                    $ref: '#/components/responses/ExecutionCompendiumModelResponseBody'
-                '404':
-                    $ref: '#/components/responses/Error'
+  /projects/{project_id}/compendia/{compendium_id}/draft:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+      - $ref: '#/components/parameters/compendium_id'
 
-    /projects/{project_id}/compendia/{compendium_id}/versions:
-        parameters:
-            -   $ref: '#/components/parameters/project_id'
-            -   $ref: '#/components/parameters/compendium_id'
+    post:
+      tags:
+        - Execution Compendium (Published)
+      summary: Edit the metadata of a published Execution Compendium.
+      description: |
+        Create a new draft from an already published Execution 
+        Compendium. The draft  created can be used to edit the 
+        published metadata. If the user wants to change the files, 
+        he must create a new version.
+      requestBody:
+        $ref: '#/components/requestBodies/ExecutionCompendiumDraftRequestBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/ExecutionCompendiumPublishedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
 
-        post:
-            tags:
-                - Execution Compendium (Versions)
-            summary: Create a new Execution Compendium version
-            description: Create a new version of an already published Execution Compendium.
-            responses:
-                '200':
-                    $ref: '#/components/responses/ExecutionCompendiumModelResponseBody'
-                '404':
-                    $ref: '#/components/responses/Error'
+    get:
+      tags:
+        - Execution Compendium (Draft)
+      summary: Read an Execution Compendium Draft
+      description: Retrieve metadata of the Execution Compendium Draft.
+      responses:
+        '200':
+          $ref: '#/components/responses/ExecutionCompendiumDraftModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
 
-        get:
-            tags:
-                - Execution Compendium (Versions)
-            summary: Get all NodeRecord versions
-            description: Get all versions of an already published NodeRecord.
-            responses:
-                '200':
-                    $ref: '#/components/responses/ListOfExecutionCompendiumModelResponseBody'
-                '404':
-                    $ref: '#/components/responses/Error'
+    put:
+      tags:
+        - Execution Compendium (Draft)
+      summary: Edit an Execution Compendium Draft
+      description: |
+        Edit an Execution Compendium Draft if it is available 
+        for the current user.
+      requestBody:
+        $ref: '#/components/requestBodies/ExecutionCompendiumDraftRequestBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/ExecutionCompendiumDraftModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
 
-    /projects/{project_id}/compendia/{compendium_id}/versions/latest:
-        parameters:
-            -   $ref: '#/components/parameters/project_id'
-            -   $ref: '#/components/parameters/compendium_id'
+    delete:
+      tags:
+        - Execution Compendium (Draft)
+      summary: Delete an Execution Compendium Draft.
+      description: Delete the Execution Compendium Draft if user has Owner role
+      responses:
+        '200':
+          description: Deleted
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
 
-        get:
-            tags:
-                - Execution Compendium (Versions)
-            summary: Get the NodeRecord latest version
-            description: Get the latest version of a NodeRecord.
-            responses:
-                '200':
-                    $ref: '#/components/responses/ExecutionCompendiumModelResponseBody'
-                '404':
-                    $ref: '#/components/responses/Error'
+  #
+  # Execution Compendium (Draft - Files)
+  #
+  /projects/{project_id}/compendia/{compendium_id}/draft/files:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+      - $ref: '#/components/parameters/compendium_id'
 
-    #
-    # Execution Compendium (Files)
-    #
-    /projects/{project_id}/compendia/{compendium_id}/files:
-        parameters:
-            -   $ref: '#/components/parameters/project_id'
-            -   $ref: '#/components/parameters/compendium_id'
+    get:
+      tags:
+        - Execution Compendium (Draft Files)
+      summary: Read the defined files for the Execution Compendium draft.
+      description: |
+        Retrieve the metadata of the files defined/uploaded in 
+        the Execution Compendium draft.
+      responses:
+        '200':
+          $ref: '#/components/responses/ExecutionCompendiumFilesDefinitionModelResponseBody'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
 
-        get:
-            tags:
-                - Execution Compendium (Files)
-            summary: List all Execution Compendium files
-            description: List all Execution Compendium files
-            responses:
-                '200':
-                    $ref: '#/components/responses/ExecutionCompendiumFilesDefinitionModelResponseBody'
-                '404':
-                    $ref: '#/components/responses/Error'
+    post:
+      tags:
+        - Execution Compendium (Draft Files)
+      summary: Define a file in the Execution Compendium Draft.
+      description: |
+        Define which files will be uploaded to the service to be part of 
+        the Execution Compendium Draft.
+      requestBody:
+        $ref: '#/components/requestBodies/ExecutionCompendiumDraftFileDefinitionRequestBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/ExecutionCompendiumFileEntryModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
 
-    /projects/{project_id}/compendia/{compendium_id}/files/{file_key}:
-        parameters:
-            -   $ref: '#/components/parameters/project_id'
-            -   $ref: '#/components/parameters/compendium_id'
-            -   $ref: '#/components/parameters/file_key'
+  /projects/{project_id}/compendia/{compendium_id}/draft/files/{file_key}:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+      - $ref: '#/components/parameters/compendium_id'
+      - $ref: '#/components/parameters/file_key'
 
-        get:
-            tags:
-                - Execution Compendium (Files)
-            summary: Get a record file metadata
-            description: Get a record file metadata
-            responses:
-                '200':
-                    $ref: '#/components/responses/ExecutionCompendiumFileMetadataModelResponseBody'
-                '404':
-                    $ref: '#/components/responses/Error'
+    get:
+      tags:
+        - Execution Compendium (Draft Files)
+      summary: Read file metadata.
+      description: Retrieve the complete metadata from the Execution Compendium Draft file.
+      responses:
+        '200':
+          $ref: '#/components/responses/ExecutionCompendiumFileMetadataModelResponseBody'
+        '404':
+          $ref: '#/components/responses/Error'
 
-    /projects/{project_id}/compendia/{compendium_id}/files/{file_key}/content:
-        parameters:
-            -   $ref: '#/components/parameters/project_id'
-            -   $ref: '#/components/parameters/compendium_id'
-            -   $ref: '#/components/parameters/file_key'
+    delete:
+      tags:
+        - Execution Compendium (Draft Files)
+      summary: Delete a file.
+      description: |
+        Delete a file and its content from a Execution Compendium Draft file.
+      responses:
+        '200':
+          description: Deleted
 
-        get:
-            tags:
-                - Execution Compendium (Files)
-            summary: Download a Execution Compendium file content.
-            description: Download the file content.
-            responses:
-                '200':
-                    $ref: '#/components/responses/BinaryResponseBody'
-                '404':
-                    $ref: '#/components/responses/Error'
+  /projects/{project_id}/compendia/{compendium_id}/draft/files/{file_key}/content:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+      - $ref: '#/components/parameters/compendium_id'
+      - $ref: '#/components/parameters/file_key'
 
-    #
-    # Execution Compendium (Draft)
-    #
-    /projects/{project_id}/compendia/{compendium_id}/draft:
-        parameters:
-            -   $ref: '#/components/parameters/project_id'
-            -   $ref: '#/components/parameters/compendium_id'
-        get:
-            tags:
-                - Execution Compendium (Draft)
-            summary: Get an already defined Execution Compendium Draft
-            description: Get an already defined Execution Compendium Draft
-            responses:
-                '200':
-                    $ref: '#/components/responses/ExecutionCompendiumModelResponseBody'
-                '404':
-                    $ref: '#/components/responses/Error'
+    get:
+      tags:
+        - Execution Compendium (Draft Files)
+      summary: Download file.
+      description: Download the content of the Execution Compendium file.
+      responses:
+        '200':
+          $ref: '#/components/responses/BinaryResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
 
-        put:
-            tags:
-                - Execution Compendium (Draft)
-            summary: Update an already defined Execution Compendium Draft.
-            description: Update an already defined Execution Compendium Draft.
-            requestBody:
-                $ref: '#/components/requestBodies/ExecutionCompendiumDraftRequestBody'
-            responses:
-                '200':
-                    $ref: '#/components/responses/ExecutionCompendiumModelResponseBody'
-                '404':
-                    $ref: '#/components/responses/Error'
+    put:
+      tags:
+        - Execution Compendium (Draft Files)
+      summary: Upload file to the Execution Compendium Draft.
+      description: |
+        Upload the content of a file defined in the Execution Compendium Draft.
+      requestBody:
+        $ref: '#/components/requestBodies/BinaryFilesRequestBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/ExecutionCompendiumFileEntryModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
 
-        post:
-            tags:
-                - Execution Compendium (Draft)
-            summary: Create a new draft from an already published Execution Draft.
-            description: Create a new draft from an already published Execution Draft.
-            requestBody:
-                $ref: '#/components/requestBodies/ExecutionCompendiumDraftRequestBody'
-            responses:
-                '200':
-                    $ref: '#/components/responses/ExecutionCompendiumModelResponseBody'
-                '404':
-                    $ref: '#/components/responses/Error'
+  /projects/{project_id}/compendia/{compendium_id}/draft/files/{file_key}/commit:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+      - $ref: '#/components/parameters/compendium_id'
+      - $ref: '#/components/parameters/file_key'
 
-        delete:
-            tags:
-                - Execution Compendium (Draft)
-            summary: Delete a Execution Compendium Draft.
-            description: Delete a Execution Compendium Draft.
-            responses:
-                '200':
-                    description: Deleted
+    post:
+      tags:
+        - Execution Compendium (Draft Files)
+      summary: Commit a file content.
+      description: |
+        Commit a file content from an Execution Compendium Draft. A commited file is 
+        registered in the service. In the commit type, metadata like `checksum`, `file size` and
+        other options are extracted.
+      requestBody:
+        required: false
+        content:
+          application/json: { }
+      responses:
+        '200':
+          $ref: '#/components/responses/ExecutionCompendiumFileMetadataModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
 
-    /projects/{project_id}/compendia/{compendium_id}/draft/actions/publish:
-        parameters:
-            -   $ref: '#/components/parameters/project_id'
-            -   $ref: '#/components/parameters/compendium_id'
+  /projects/{project_id}/compendia/{compendium_id}/draft/actions/publish:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+      - $ref: '#/components/parameters/compendium_id'
 
-        post:
-            tags:
-                - Execution Compendium (Draft)
-            summary: Publish a Execution Compendium draft
-            description: Create a new Execution Compendium version and publish it and make it available to other users.
-            requestBody:
-                required: false
-                content:
-                    application/json: { }
-            responses:
-                '202':
-                    $ref: '#/components/responses/ExecutionCompendiumModelResponseBody'
-                '404':
-                    $ref: '#/components/responses/Error'
+    post:
+      tags:
+        - Execution Compendium (Draft actions)
+      summary: Publish a Execution Compendium Draft
+      description: |
+        Create a new Execution Compendium version, publish it and 
+        make it available to other users in the project.
+      requestBody:
+        required: false
+        content:
+          application/json: { }
+      responses:
+        '202':
+          $ref: '#/components/responses/ExecutionCompendiumPublishedModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
 
-    #
-    # Execution Compendium Draft (Files)
-    #
-    /projects/{project_id}/compendia/{compendium_id}/draft/files:
-        parameters:
-            -   $ref: '#/components/parameters/project_id'
-            -   $ref: '#/components/parameters/compendium_id'
-        post:
-            tags:
-                - Execution Compendium (Draft Files)
-            summary: Start a Execution Compendium draft file upload(s).
-            description: Start a Execution Compendium draft file upload(s).
-            requestBody:
-                $ref: '#/components/requestBodies/ExecutionCompendiumDraftFileDefinitionRequestBody'
-            responses:
-                '201':
-                    $ref: '#/components/responses/ExecutionCompendiumFilesDefinitionModelResponseBody'
-                '404':
-                    $ref: '#/components/responses/Error'
-        get:
-            tags:
-                - Execution Compendium (Draft Files)
-            summary: List all files from the Execution Compendium Draft.
-            description: List all files from the Execution Compendium Draft.
-            responses:
-                '200':
-                    $ref: '#/components/responses/ExecutionCompendiumFilesDefinitionModelResponseBody'
-                '404':
-                    $ref: '#/components/responses/Error'
+  #
+  # Execution Compendium (Published)
+  #
+  /projects/{project_id}/compendia/{compendium_id}:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+      - $ref: '#/components/parameters/compendium_id'
 
-    /projects/{project_id}/compendia/{compendium_id}/draft/files/{file_key}/content:
-        parameters:
-            -   $ref: '#/components/parameters/project_id'
-            -   $ref: '#/components/parameters/compendium_id'
-            -   $ref: '#/components/parameters/file_key'
+    get:
+      tags:
+        - Execution Compendium (Published)
+      summary: Read an Execution Compendium Draft.
+      description: Retrieve the Execution Compendium metadata.
+      responses:
+        '200':
+          $ref: '#/components/responses/ExecutionCompendiumPublishedModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
 
-        put:
-            tags:
-                - Execution Compendium (Draft Files)
-            summary: Upload a new file content to the Execution Compendium Draft.
-            description: Upload a new file content to the Execution Compendium Draft.
-            requestBody:
-                $ref: '#/components/requestBodies/BinaryFilesRequestBody'
+  #
+  # Execution Compendium (Published - Files)
+  #
+  /projects/{project_id}/compendia/{compendium_id}/files:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+      - $ref: '#/components/parameters/compendium_id'
 
-            responses:
-                '200':
-                    $ref: '#/components/responses/ExecutionCompendiumFileEntryModelResponseBody'
-                '404':
-                    $ref: '#/components/responses/Error'
+    get:
+      tags:
+        - Execution Compendium (Published - Files)
+      summary: Read the defined files for the Execution Compendium.
+      description: Retrieve the metadata of the files defined/uploaded in the Execution Compendium.
+      responses:
+        '200':
+          $ref: '#/components/responses/ExecutionCompendiumFilesDefinitionModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
 
-        get:
-            tags:
-                - Execution Compendium (Draft Files)
-            summary: Download a file from the Execution Compendium draft.
-            description: Download a file from the Execution Compendium draft.
-            responses:
-                '200':
-                    $ref: '#/components/responses/BinaryResponseBody'
-                '404':
-                    $ref: '#/components/responses/Error'
+  /projects/{project_id}/compendia/{compendium_id}/files/{file_key}:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+      - $ref: '#/components/parameters/compendium_id'
+      - $ref: '#/components/parameters/file_key'
 
-    /projects/{project_id}/compendia/{compendium_id}/draft/files/{file_key}/commit:
-        parameters:
-            -   $ref: '#/components/parameters/project_id'
-            -   $ref: '#/components/parameters/compendium_id'
-            -   $ref: '#/components/parameters/file_key'
+    get:
+      tags:
+        - Execution Compendium (Published - Files)
+      summary: Read file metadata.
+      description: Retrieve the complete metadata from the Execution Compendium file.
+      responses:
+        '200':
+          $ref: '#/components/responses/ExecutionCompendiumFileMetadataModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
 
-        post:
-            tags:
-                - Execution Compendium (Draft Files)
-            summary: Commit a file from a Execution Compendium Draft.
-            description: Create a new version of the request file.
-            requestBody:
-                required: false
-                content:
-                    application/json: { }
-            responses:
-                '200':
-                    $ref: '#/components/responses/ExecutionCompendiumFileMetadataModelResponseBody'
-                '404':
-                    $ref: '#/components/responses/Error'
+  /projects/{project_id}/compendia/{compendium_id}/files/{file_key}/content:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+      - $ref: '#/components/parameters/compendium_id'
+      - $ref: '#/components/parameters/file_key'
 
-    /projects/{project_id}/compendia/{compendium_id}/draft/files/{file_key}:
-        parameters:
-            -   $ref: '#/components/parameters/project_id'
-            -   $ref: '#/components/parameters/compendium_id'
-            -   $ref: '#/components/parameters/file_key'
+    get:
+      tags:
+        - Execution Compendium (Files)
+      summary: Download file.
+      description: Download the content of the Execution Compendium file.
+      responses:
+        '200':
+          $ref: '#/components/responses/BinaryResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
 
-        get:
-            tags:
-                - Execution Compendium (Draft Files)
-            summary: Get a file metadata from the Execution Compendium draft.
-            description: Get a file metadata from the Execution Compendium draft.
-            responses:
-                '200':
-                    $ref: '#/components/responses/ExecutionCompendiumFileMetadataModelResponseBody'
-                '404':
-                    $ref: '#/components/responses/Error'
+  #
+  # Execution Compendium (Published - Versions)
+  #
+  /projects/{project_id}/compendia/{compendium_id}/versions:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+      - $ref: '#/components/parameters/compendium_id'
 
-        delete:
-            tags:
-                - Execution Compendium (Draft Files)
-            summary: Delete a file from the Execution Compendium draft.
-            description: Delete a file from the Execution Compendium draft.
-            responses:
-                '200':
-                    description: Deleted
+    get:
+      tags:
+        - Execution Compendium (Published - Versions)
+      summary: Read Execution Compendium versions
+      description: |
+        Retrieve all versions available for the published Execution Compendium.
+      responses:
+        '200':
+          $ref: '#/components/responses/ListOfExecutionCompendiumPublishedModelResponseBody'
+        '404':
+          $ref: '#/components/responses/Error'
 
-    #
-    # User Workspace (Projects and Compendia)
-    #
-    /user/projects/:
-        get:
-            tags:
-                - User workspace
-            summary: Get all projects created by the user
-            description: Get all projects created by the user
-            responses:
-                '200':
-                    $ref: '#/components/responses/ListOfProjectCreatedModelResponseBody'
+    post:
+      tags:
+        - Execution Compendium (Published - Versions)
+      summary: New Execution Compendium version
+      description: |
+        Create a new version of an already published Execution Compendium.
+      responses:
+        '200':
+          $ref: '#/components/responses/ExecutionCompendiumDraftModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
 
-    /user/projects/{project_id}/compendia:
-        parameters:
-            -   $ref: '#/components/parameters/project_id'
+  /projects/{project_id}/compendia/{compendium_id}/versions/latest:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+      - $ref: '#/components/parameters/compendium_id'
 
-        get:
-            tags:
-                - User workspace
-            summary: List all compendia (Draft and Published) created by the user.
-            description: List all compendia (Draft and Published) created by the user in the defined project.
-            responses:
-                '200':
-                    $ref: '#/components/responses/ListOfExecutionCompendiumModelResponseBody'
-                '404':
-                    $ref: '#/components/responses/Error'
+    get:
+      tags:
+        - Execution Compendium (Published - Versions)
+      summary: Read the latest version of the Execution Compendium.
+      description: |
+        Retrieve the metadata of the latest published Execution Compendium.
+      responses:
+        '200':
+          $ref: '#/components/responses/ExecutionCompendiumPublishedModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+
+  #
+  # User Workspace (Projects and Compendia)
+  #
+  /user/projects/:
+    get:
+      tags:
+        - User workspace
+      summary: List the user projects
+      description: |
+        Retrieve the list of projects the user can access (as collaborator or owner).
+      responses:
+        '200':
+          $ref: '#/components/responses/ListOfProjectCreatedModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+
+  /user/projects/{project_id}/compendia:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+
+    get:
+      tags:
+        - User workspace
+      summary: List the user compendia (Draft and Published)
+      description: |
+        Retrieve the list of compendia the user can access (Draft or Published).
+      responses:
+        '200':
+          $ref: '#/components/responses/ListOfExecutionCompendiumMixedModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+
+  #
+  # Research Workflow
+  #
+  /projects/{project_id}/workflows:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+
+    get:
+      tags:
+        - Research Workflow
+      summary: Search Research Workflows
+      description: |
+        Retrieve the Research Workflow available for the user authenticated.
+
+      parameters:
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/size'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/accept'
+
+      responses:
+        '200':
+          $ref: '#/components/responses/ListOfResearchWorkflowCreatedModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+
+    post:
+      tags:
+        - Research Workflow
+      summary: Create a new Research Workflow
+      description: Create a new Research Workflow.
+      requestBody:
+        $ref: '#/components/requestBodies/ResearchWorkflowDefinitionModelRequestBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/ResearchWorkflowDefinitionModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+
+  /projects/{project_id}/workflows/{workflow_id}:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+      - $ref: '#/components/parameters/workflow_id'
+
+    get:
+      tags:
+        - Research Workflow
+      summary: Read the Research Workflow.
+      description: Retrieve metadata of the Research Workflow.
+      responses:
+        '200':
+          $ref: '#/components/responses/ResearchWorkflowCreatedModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+
+    put:
+      tags:
+        - Research Workflow
+      summary: Update the Research Workflow
+      description: |
+        Update the metadata of the Research Workflow. The graph property is not 
+        updated. To update the graph, the user new to use the action endpoints.
+      requestBody:
+        $ref: '#/components/requestBodies/ResearchWorkflowDefinitionModelRequestBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/ResearchWorkflowCreatedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+
+    delete:
+      tags:
+        - Research Workflow
+      summary: Delete the Research Workflow.
+      description: Delete the Research Workflow from the Project.
+      responses:
+        '200':
+          description: Deleted
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+
+  /projects/{project_id}/workflows/{workflow_id}/actions/add/compendium/{compendium_id}:
+    parameters:
+      - $ref: '#/components/parameters/compendium_id'
+      - $ref: '#/components/parameters/project_id'
+      - $ref: '#/components/parameters/workflow_id'
+
+    post:
+      tags:
+        - Research Workflow (Actions)
+      summary: Add Execution Compendium.
+      description: Add an already published Execution Compendium to the Research Workflow.
+      responses:
+        '200':
+          $ref: '#/components/responses/ResearchWorkflowCreatedModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+
+  /projects/{project_id}/workflows/{workflow_id}/actions/delete/compendium/{compendium_id}:
+    parameters:
+      - $ref: '#/components/parameters/compendium_id'
+      - $ref: '#/components/parameters/project_id'
+      - $ref: '#/components/parameters/workflow_id'
+
+    delete:
+      tags:
+        - Research Workflow (Actions)
+      summary: Remove Execution Compendium.
+      description: Remove an Execution Compendium from the Research Workflow.
+      responses:
+        '200':
+          description: Deleted
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+
+  /projects/{project_id}/workflows/{workflow_id}/actions/finish:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+      - $ref: '#/components/parameters/workflow_id'
+
+    post:
+      tags:
+        - Research Workflow (Actions)
+      summary: Finish the Research Workflow
+      description: Close the Workflow activity and freezes its content.
+      responses:
+        '200':
+          $ref: '#/components/responses/ResearchWorkflowCreatedModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+
+  /projects/{project_id}/workflows/{workflow_id}/admin/actions/add/contributor/{agent_id}:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+      - $ref: '#/components/parameters/workflow_id'
+      - $ref: '#/components/parameters/agent_id'
+
+    post:
+      tags:
+        - Research Workflow (Administration Actions)
+      summary: Add a contributor to the Research Workflow
+      description: |
+        Add a user to collaborate with the Research Workflow. A contributor 
+        can add/remove Compendia from the Workflow.
+      responses:
+        '200':
+          $ref: '#/components/responses/ResearchWorkflowCreatedModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+
+  /projects/{project_id}/workflows/{workflow_id}/admin/actions/delete/contributor/{agent_id}:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+      - $ref: '#/components/parameters/workflow_id'
+      - $ref: '#/components/parameters/agent_id'
+
+    delete:
+      tags:
+        - Research Workflow (Administration Actions)
+      summary: Remove a contributor from the Research Workflow.
+      description: |
+        Remove a user contributor from the Research Workflow.
+      responses:
+        '200':
+          description: Deleted
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+
+  /projects/{project_id}/workflows/{workflow_id}/admin/agents:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+      - $ref: '#/components/parameters/workflow_id'
+
+    post:
+      tags:
+        - Research Workflow (Administration Actions)
+      summary: List the Research Workflow agents
+      description: |
+        Retrieve a list of all agents (Collaborators and Owners) registered in the selected workflow.
+      responses:
+        '200':
+          $ref: '#/components/responses/ResearchWorkflowAgentResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+
+  #
+  # Execution Job
+  #
+  /projects/{project_id}/executions:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+
+    get:
+      tags:
+        - Execution
+      summary: Search Execution Job.
+      description: |
+        Retrieve Execution Job available for the authenticated user in the project.
+      responses:
+        '200':
+          $ref: '#/components/responses/ListOfExecutionCreatedModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+
+    post:
+      tags:
+        - Execution
+      summary: |
+        Create Execution Job. This job is used to rerun a complete Research 
+        Workflow and reproduce its results.
+      description: |
+        Create a new Execution Job.
+      requestBody:
+        $ref: '#/components/requestBodies/ExecutionDefinitionModelRequestBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/ExecutionCreatedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+
+  /projects/{project_id}/executions/{execution_id}:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+      - $ref: '#/components/parameters/execution_id'
+
+    get:
+      tags:
+        - Execution
+      summary: Read Execution Job.
+      description: |
+        Retrieve the metadata from the Execution Job selected.
+      responses:
+        '200':
+          $ref: '#/components/responses/ExecutionCreatedModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+
+    put:
+      tags:
+        - Execution
+      summary: Update Execution Job.
+      description: |
+        Update an Execution Job metadata. User can only update the following fields: `workflow-id` and `service`.
+      requestBody:
+        $ref: '#/components/requestBodies/ExecutionDefinitionModelRequestBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/ExecutionCreatedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+
+    delete:
+      tags:
+        - Execution
+      summary: Delete Execution Job
+      description: |
+        Remove the Execution Job from the Research Project.
+      responses:
+        '200':
+          description: Deleted
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+
+  /projects/{project_id}/executions/services:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+
+    get:
+      tags:
+        - Execution (Services)
+      summary: List available Execution services.
+      description: |
+        Retrieve metadata of the execution services available in the instance.
+      responses:
+        '200':
+          $ref: '#/components/responses/ListOfExecutionServiceResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+
+  /projects/{project_id}/executions/{execution_id}/actions/start:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+      - $ref: '#/components/parameters/execution_id'
+
+    post:
+      tags:
+        - Execution (Actions)
+      summary: Start the Execution Job
+      description: |
+        Start the execution of the Job.
+      responses:
+        '200':
+          $ref: '#/components/responses/ExecutionCreatedModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+
+  /projects/{project_id}/executions/{execution_id}/actions/cancel:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+      - $ref: '#/components/parameters/execution_id'
+
+    delete:
+      tags:
+        - Execution (Actions)
+      summary: Cancel a running Execution Job
+      description: Cancel the execution of the Job.
+      responses:
+        '200':
+          # ToDo: Define a more specific return (e.g., with the status field equal to `canceled`)
+          $ref: '#/components/responses/ExecutionCreatedModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+
+  #
+  # Deposit Job
+  #
+  /projects/{project_id}/deposits:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+
+    get:
+      tags:
+        - Deposit
+      summary: Search Deposit Job.
+      description: |
+        Retrieve Deposit Jobs available for the authenticated user in the project.
+      responses:
+        '200':
+          $ref: '#/components/responses/ListOfDepositCreatedModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+
+    post:
+      tags:
+        - Deposit
+      summary: |
+        Create an Deposit Job.
+      description: |
+        Create a new Deposit Job. This job is used to deposit Research Workflows 
+        in dissemination services (e.g., Zenodo).
+      requestBody:
+        $ref: '#/components/requestBodies/DepositDefinitionModelRequestBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/DepositCreatedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+
+  /projects/{project_id}/deposits/{deposit_id}:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+      - $ref: '#/components/parameters/deposit_id'
+
+    get:
+      tags:
+        - Deposit
+      summary: Read Deposit Job.
+      description: |
+        Retrieve the metadata from the selected Deposit Job.
+      responses:
+        '200':
+          $ref: '#/components/responses/DepositCreatedModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+
+    put:
+      tags:
+        - Deposit
+      summary: Update Deposit Job.
+      description: |
+        Update an Deposit Job metadata. User can only update the following fields: 
+        `workflows`, `services` and `customizations`.
+      requestBody:
+        $ref: '#/components/requestBodies/DepositDefinitionModelRequestBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/DepositCreatedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+
+    delete:
+      tags:
+        - Deposit
+      summary: Delete Deposit Job
+      description: |
+        Remove the Deposit Job from the Research Project.
+      responses:
+        '200':
+          description: Deleted
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+
+  /projects/{project_id}/deposits/services:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+
+    get:
+      tags:
+        - Deposit (Services)
+      summary: List available Deposit services.
+      description: |
+        Retrieve metadata of the services available in the instance to 
+        deposit an Research Workflow and it's data.
+      responses:
+        '200':
+          $ref: '#/components/responses/ListOfDepositServiceResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+
+  /projects/{project_id}/deposits/{deposit_id}/actions/start:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+      - $ref: '#/components/parameters/deposit_id'
+
+    post:
+      tags:
+        - Deposit (Actions)
+      summary: Start the Deposit Job
+      description: |
+        Start the execution of the Deposit Job.
+      responses:
+        '200':
+          $ref: '#/components/responses/DepositCreatedModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
+
+  /projects/{project_id}/deposit/{deposit_id}/actions/cancel:
+    parameters:
+      - $ref: '#/components/parameters/project_id'
+      - $ref: '#/components/parameters/deposit_id'
+
+    delete:
+      tags:
+        - Deposit (Actions)
+      summary: Cancel a running Deposit Job
+      description: Cancel the execution of the Deposit Job.
+      responses:
+        '200':
+          # ToDo: Define a more specific return (e.g., with the status field equal to `canceled`)
+          $ref: '#/components/responses/DepositCreatedModelResponseBody'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/Error'
+        '500':
+          $ref: '#/components/responses/Error'
 
 components:
-    parameters:
-        project_id:
-            in: path
-            name: project_id
-            description: Project ID
-            required: true
-            schema:
-                type: string
-        pipeline_id:
-            in: path
-            name: pipeline_id
-            description: Project Research Pipeline ID
-            required: true
-            schema:
-                type: string
-        compendium_id:
-            in: path
-            name: compendium_id
-            description: Execution Compendium ID
-            required: true
-            schema:
-                type: string
-        file_key:
-            in: path
-            name: file_key
-            description: File Key
-            required: true
-            schema:
-                type: string
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
 
-    schemas:
+  parameters:
+    # search query parameters
+    q:
+      in: query
+      name: q
+      description: Search query used to filter results based on Elasticsearch's query string syntax.
+      schema:
+        type: string
+    sort:
+      in: query
+      name: sort
+      description: Sort search results.
+      schema:
+        type: string
+    size:
+      in: query
+      name: size
+      description: 'Specify number of items in the results page (default: 10)'
+      schema:
+        type: integer
+    page:
+      in: query
+      name: page
+      description: Specify the number of the page in pagination results
+      schema:
+        type: integer
+    allversions:
+      in: query
+      name: allversions
+      description: Specify if all versions of the record should be included (e.g., draft and published).
+      schema:
+        type: boolean
+    accept:
+      in: header
+      name: accept
+      description: Accepted type
+      schema:
+        enum:
+          - application/json
+    # models
+    agent_id:
+      in: path
+      name: agent_id
+      description: Agent (Person or Organization) Identifier
+      required: true
+      schema:
+        type: integer
+    project_id:
+      in: path
+      name: project_id
+      description: Project Identifier
+      required: true
+      schema:
+        type: string
+    workflow_id:
+      in: path
+      name: workflow_id
+      description: Research Workflow Identifier
+      required: true
+      schema:
+        type: string
+    compendium_id:
+      in: path
+      name: compendium_id
+      description: Execution Compendium Identifier
+      required: true
+      schema:
+        type: string
+    execution_id:
+      in: path
+      name: execution_id
+      description: Execution Job Identifier
+      required: true
+      schema:
+        type: string
+    deposit_id:
+      in: path
+      name: deposit_id
+      description: Deposit Job Identifier
+      required: true
+      schema:
+        type: string
+    file_key:
+      in: path
+      name: file_key
+      description: File Key
+      required: true
+      schema:
+        type: string
 
-        #
-        # General schemas
-        #
+  schemas:
 
-        RootType:
-            title: Landing Page
-            description: 'The landing page that provides the service version.'
-            type: object
-            properties:
-                application_name:
-                    type: string
-                    example: 'SpatioTemporal Open Research Manager'
-                    description: 'Application name'
-                version:
-                    type: string
-                    example: '0.1'
-                    description: 'Application version'
-            required:
-               - application_name
-               - version
+    #
+    # General schemas
+    #
+    RootType:
+      title: Landing Page
+      description: 'The landing page that provides the service version.'
+      type: object
+      properties:
+        application_name:
+          type: string
+          example: 'SpatioTemporal Open Research Manager'
+          description: 'Application name'
+        version:
+          type: string
+          example: '0.1.0'
+          description: 'Application version'
+      required:
+        - application_name
+        - version
 
-        ExceptionType:
-            title: Exception raised by the service.
-            description: 'Information about the raised exception.'
-            type: object
-            properties:
-                code:
-                    type: string
-                    example: '403'
-                    description: 'Raised error code'
-                description:
-                    type: string
-                    example: 'Unauthorized access'
-                    description: 'Raised error description'
+    ExceptionType:
+      title: Exception raised by the service.
+      description: 'Information about the raised exception.'
+      type: object
+      properties:
+        status:
+          type: integer
+          description: 'Raised error code'
+        message:
+          type: string
+          description: 'Raised error description'
 
-        #
-        # Storm WS Schemas
-        #
-
-        # Project
-        ProjectDefinitionModel:
-            title: Research Project
-            description: Storm Project model
-            type: object
-            properties:
-                id:
-                    type: string
-                    example: 'project-example-1'
-                    description: 'Research Project Unique identifier'
-                metadata:
-                    type: object
-                    properties:
-                        title:
-                            type: string
-                            example: 'Example of Research Project'
-                            description: 'Project title'
-                        description:
-                            type: string
-                            example: 'A exemplar description'
-                            description: 'Project description'
-                        subjects:
-                            type: array
-                            items:
-                                type: string
-                                example: ['Subject 1', 'Subject 2']
-                            description: 'Project subjects'
-                        rights:
-                            type: array
-                            items:
-                                type: object
-                                properties:
-                                    title:
-                                        type: string
-                                        example: 'Right of the compendium software'
-                                        description: 'Right title'
-                                    description:
-                                        type: string
-                                        example: 'A right description'
-                                        description: 'Right description'
-                                    link:
-                                        type: string
-                                        example: 'https://link/to/right/full/document'
-                                        description: 'Link to the complete right'
-
-
-        ProjectCreatedModel:
-            allOf:
-                -   $ref: '#/components/schemas/ProjectDefinitionModel'
-                -   type: object
-                    properties:
-                        pipeline_id:
-                            type: integer
-                            example: 2
-                        created_at:
-                            type: string
-                            example: '2021-09-06T12:03:42.024484+00:00'
-                            format: 'date-time'
-                        updated_at:
-                            type: string
-                            example: '2021-09-06T12:03:42.024504+00:00'
-                            format: 'date-time'
-                        is_finished:
-                            type: boolean
-                            example: false
-
-        #
-        # Project Pipeline
-        #
-        ProjectPipelineDefinitionModel:
-            title: Project Pipeline Definition model
-            description: 'Project Pipeline definition model'
-            type: object
-            properties:
-                label:
-                    type: string
-                    description: 'Pipeline label. Is used to identity the type/usage/context of the pipeline'
-                    example: 'lulc_classification_pipeline'
-                metadata:
-                    type: object
-                    properties:
-                        description:
-                            type: string
-                            description: 'Pipeline description'
-                            example: 'A pipeline with execution steps that evaluate a LULC classification map'
-                    description: 'Pipeline metadata'
-
-        ProjectPipelineModel:
-            title: Project Pipeline
-            description: 'Project Pipeline model'
-            type: object
-            properties:
-                pipeline:
-                    type: object
-                    properties:
-                        directed:
-                            type: boolean
-                            description: 'Flag that indicates whether the pipeline graph is directed or not'
-                        type:
-                            type: string
-                            description: 'Graph type'
-                            example: 'Directed Acyclic Graph'
-                        metadata:
-                            type: object
-                            properties:
-                                description:
-                                  type: string
-                                  description: 'Graph description'
-                        edges:
-                            type: array
-                            items:
-                                type: object
-                                properties:
-                                    source:
-                                        type: string
-                                        description: 'Execution Compendium ID used as source node in the edge'
-                                        example: 'yadgcb0g64'
-                                    target:
-                                        type: string
-                                        description: 'Execution Compendium ID used as target node in the edge'
-                                        example: 'wt410zkq75'
-                            description: 'List of pipeline compendia connections'
-                        nodes:
-                            type: array
-                            items:
-                                type: string
-                                description: 'Execution Compendium ID represented by the node'
-                                example: 'wt410zkq75'
-                            description: 'List of pipeline compendia'
-
-        # Graph
-        ExecutionCompendiumMetadata:
-            title: Execution Compendium metadata
-            description: 'Metadata used to describe the Execution Compendium content (inputs, outputs, environments)'
-            type: object
-            properties:
-                author:
-                    type: string
-                    example: 'Aladin'
-                description:
-                    type: string
-                    example: 'A metadata description'
-
-        ExecutionCompendiumDraftFile:
-            title: Execution Compendium draft file
-            description: 'Define files in the Execution Compendium draft'
-            type: object
-            properties:
-                key:
-                    type: string
-                    example: 'input_file.txt'
-
-        ExecutionCompendiumDraft:
-            title: Execution Compendium Draft
-            description: 'Execution Compendium draft definition'
-            type: object
-            properties:
-                data:
-                    type: object
-                    properties:
-                        inputs:
-                            type: array
-                            items:
-                                $ref: '#/components/schemas/ExecutionCompendiumDraftFile'
-                        outputs:
-                            type: array
-                            items:
-                                $ref: '#/components/schemas/ExecutionCompendiumDraftFile'
-                environment:
-                    $ref: '#/components/schemas/ExecutionCompendiumDraftFile'
-                command:
-                    type: string
-                    example: 'python3 myscript.py --arg1 --arg2'
-                command_checksum:
-                    type: string
-                    example: '1220df718931fce2467010993b914f1ad3b9d00a50a4390d42e8e2138dcbb893514d'
-                metadata:
-                    $ref: '#/components/schemas/ExecutionCompendiumMetadata'
-
-
-        #
-        # Invenio Framework customized models
-        #
-
-        # Files
-        ExecutionCompendiumFileMetadataModel:
-            title: Execution Compendium document
-            description: 'JSON document with information about a commited file.'
-            type: object
-            properties:
-                size:
+    #
+    # Base Metadata Schemas
+    #
+    MetadataGeoJSONGeometryModel: # following the InvenioRDM metadata model.
+      title: GeoJSON Geometry
+      oneOf:
+        - title: GeoJSON Point
+          type: object
+          required:
+            - type
+            - coordinates
+          properties:
+            type:
+              type: string
+              enum:
+                - Point
+            coordinates:
+              type: array
+              minItems: 2
+              items:
+                type: number
+        - title: GeoJSON LineString
+          type: object
+          required:
+            - type
+            - coordinates
+          properties:
+            type:
+              type: string
+              enum:
+                - LineString
+            coordinates:
+              type: array
+              minItems: 2
+              items:
+                type: array
+                minItems: 2
+                items:
+                  type: number
+        - title: GeoJSON Polygon
+          type: object
+          required:
+            - type
+            - coordinates
+          properties:
+            type:
+              type: string
+              enum:
+                - Polygon
+            coordinates:
+              type: array
+              items:
+                type: array
+                minItems: 4
+                items:
+                  type: array
+                  minItems: 2
+                  items:
                     type: number
-                    example: 956.0
-                updated:
-                    type: string
-                    example: '2021-09-06T00:50:55.170782+00:00'
-                    format: 'date-time'
-                mimetype:
-                    type: string
-                    example: 'text/plain'
-                checksum:
-                    type: string
-                    example: 'md5:b573b5f2995f011afc843710cf4739a6'
-                key:
-                    type: string
-                    example: 'output_file.txt'
-                storage_class:
-                    type: string
-                    example: 'S'
-                version_id:
-                    type: string
-                    example: 'd408bc2c-0abe-43b7-b90e-342d4b97be3a'
-                file_id:
-                    type: string
-                    example: '90a20606-9556-4d2e-a411-6645a739ba24'
-                links:
-                    type: object
-                    properties:
-                        self:
-                            type: string
-                            description: 'Link to the current file'
-                            example: 'https://127.0.0.1:5000/pipeline/1/compendium/2k7cgyek84/files/output_file.txt'
-                        content:
-                            type: string
-                            description: 'Link to download the current file'
-                            example: 'https://127.0.0.1:5000/pipeline/1/compendium/2k7cgyek84/files/output_file.txt/content'
-                created:
-                    type: string
-                    example: '2021-09-06T00:50:12.162515+00:00'
-                    format: 'date-time'
-                status:
-                    type: string
-                    example: [ completed ]
+        - title: GeoJSON MultiPoint
+          type: object
+          required:
+            - type
+            - coordinates
+          properties:
+            type:
+              type: string
+              enum:
+                - MultiPoint
+            coordinates:
+              type: array
+              items:
+                type: array
+                minItems: 2
+                items:
+                  type: number
+        - title: GeoJSON MultiLineString
+          type: object
+          required:
+            - type
+            - coordinates
+          properties:
+            type:
+              type: string
+              enum:
+                - MultiLineString
+            coordinates:
+              type: array
+              items:
+                type: array
+                minItems: 2
+                items:
+                  type: array
+                  minItems: 2
+                  items:
+                    type: number
+        - title: GeoJSON MultiPolygon
+          type: object
+          required:
+            - type
+            - coordinates
+          properties:
+            type:
+              type: string
+              enum:
+                - MultiPolygon
+            coordinates:
+              type: array
+              items:
+                type: array
+                items:
+                  type: array
+                  minItems: 4
+                  items:
+                    type: array
+                    minItems: 2
+                    items:
+                      type: number
 
-        ExecutionCompendiumFileEntryModel:
-            title: Execution Compendium File entry.
-            description: 'Execution Compendium file description'
-            type: object
-            properties:
-                updated:
-                    type: string
-                    example: '2021-09-06T00:50:12.165072+00:00'
-                    format: 'date-time'
-                key:
-                    type: string
-                    example: 'output_file.txt'
-                links:
-                    type: object
-                    properties:
-                        self:
-                            type: string
-                            description: 'Link to the current file'
-                            example: 'https://127.0.0.1:5000/pipeline/1/compendium/2k7cgyek84/files/output_file.txt'
-                        content:
-                            type: string
-                            description: 'Link to download the file content'
-                            example: 'https://127.0.0.1:5000/pipeline/1/compendium/2k7cgyek84/files/output_file.txt/content'
-                created:
-                    type: string
-                    example: '2021-09-06T00:50:12.162515+00:00'
-                status:
-                    type: string
-                    enum: [ pending, completed ]
-                metadata:
-                    type: object
-                    description: 'metadata extracted from the defined tile'
+    MetadataDateModel:
+      title: Metadata date model
+      description: Date or date internal model
+      type: object
+      properties:
+        date:
+          type: string
+          example: 1939/1945
+          description: Date or date interval in EDTF level 0 format
+        type:
+          type: object
+          description: Date type
+          properties:
+            id:
+              type: string
+              enum:
+                - accepted
+                - available
+                - collected
+                - copyrighted
+                - created
+                - issued
+                - other
+                - submitted
+                - updated
+                - valid
+                - withdrawn
+        description:
+          type: string
+          description: Description of the date
 
-        ExecutionCompendiumFilesDefinitionModel:
-            title: Execution Compendium files definition model
-            description: 'Model with files information from a Execution Compendium.'
-            type: object
-            properties:
-                enabled:
-                    type: boolean
-                    example: true
-                links:
-                    type:
-                        object
-                    properties:
-                        self:
+    AgentModel:
+      title: Agent model
+      description: 'Agent model'
+      oneOf:
+        - type: object
+          properties:
+            user:
+              type: integer
+        - type: object
+          properties:
+            project:
+              type: integer
+
+    #
+    # Project Schemas
+    #
+    ProjectAgentModel:
+      title: Project agent model
+      description: Project agent model
+      type: object
+      properties:
+        owned_by:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentModel'
+        contributed_by:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentModel'
+
+    ProjectCreatibutorModel: # from InvenioRDM metadata model (Creatibutor = Creator + Contributor)
+      title: Project Contributor/Creator
+      description: Storm Project Contributor/Creator model
+      type: object
+      properties:
+        person_or_org:
+          type: object
+          properties:
+            name:
+              type: string
+              example: John Doe
+              description: Contributor/Creator name
+            type:
+              type: string
+              enum:
+                - "personal"
+                - "organizational"
+            given_name:
+              type: string
+              example: John
+              description: Contributor/Creator given name
+            family_name:
+              type: string
+              example: Doe
+              description: Contributor/Creator family name
+
+    ProjectDefinitionModel:
+      title: Research Project
+      description: Storm Project model
+      type: object
+      properties:
+        id:
+          type: string
+          example: 'project-example-1'
+          description: 'Research Project Unique identifier'
+        metadata:
+          type: object
+          properties:
+            title:
+              type: string
+              example: 'Example of Research Project'
+              description: 'Project title'
+            description:
+              type: string
+              example: 'An exemplar description'
+              description: 'Research Project description'
+            subjects:
+              type: array
+              items:
+                type: string
+                example: [ 'Subject 1', 'Subject 2' ]
+              description: 'Project subjects'
+            rights:
+              type: array
+              items:
+                type: object
+                properties:
+                  title:
+                    type: string
+                    example: 'Right of the compendium software'
+                    description: 'Right title'
+                  description:
+                    type: string
+                    example: 'A right description'
+                    description: 'Right description'
+                  link:
+                    type: string
+                    example: 'https://link/to/right/full/document'
+                    description: 'Link to the complete right'
+            contributors:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProjectCreatibutorModel'
+            creators:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProjectCreatibutorModel'
+            dates:
+              type: array
+              items:
+                $ref: '#/components/schemas/MetadataDateModel'
+            locations:
+              type: object
+              description: Geographical locations relevant for the Project.
+              properties:
+                features:
+                  type: array
+                  items:
+                    allOf:
+                      - type: object
+                        additionalProperties: false
+                        properties:
+                          geometry:
+                            $ref: '#/components/schemas/MetadataGeoJSONGeometryModel'
+                          place:
                             type: string
-                            description: 'Link to the Execution Compendium files'
-                            example: 'https://127.0.0.1:5000/pipeline/1/compendium/2k7cgyek84/files'
-                entries:
+                            description: 'Place of the location'
+                            minLength: 1
+                          description:
+                            type: string
+                            description: Description of the location
+                            minLength: 1
+
+    ProjectCreatedModel:
+      allOf:
+        - $ref: '#/components/schemas/ProjectDefinitionModel'
+        - type: object
+          properties:
+            created_at:
+              type: string
+              example: '2021-09-06T12:03:42.024484+00:00'
+              format: 'date-time'
+            updated_at:
+              type: string
+              example: '2021-09-06T12:03:42.024504+00:00'
+              format: 'date-time'
+            is_finished:
+              type: boolean
+              example: false
+            revision_id:
+              type: integer
+              example: 1
+            links:
+              type: object
+              properties:
+                self:
+                  type: string
+                  description: 'Link to the project itself'
+                actions:
+                  type: object
+                  description: 'Link to actions available for the selected project'
+                  properties:
+                    finish:
+                      type: string
+                      description: |
+                        Link finish the project. When the project is finished,
+                        any other action can't be performed (e.g., Add data, change metadata)
+
+    #
+    # Research Workflow Schemas
+    #
+    ResearchWorkflowAgentModel:
+      title: Research workflow agent model
+      description: Research Workflow agent model
+      type: object
+      properties:
+        contributed_by:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentModel'
+
+    ResearchWorkflowDefinitionModel:
+      title: Research Workflow Definition model
+      description: 'Research Workflow model used to create a new Workflow in the service.'
+      type: object
+      properties:
+        title:
+          type: string
+          example: My workflow
+          description: Primary title of the workflow
+        description:
+          type: string
+          example: |
+            "<b>Workflow description</b>: This workflow is a very simple example"
+          description: Description for workflow (may contain HTML).
+        version:
+          type: string
+          example: "v0.1.0"
+          description: Workflow version tag.
+
+    ResearchWorkflowCreatedModel:
+      title: Research Workflow
+      description: 'Research Workflow model'
+      type: object
+      properties:
+        id:
+          type: string
+          description: Workflow Identifier.
+          example: 'workflow-example-id'
+        created:
+          type: string
+          example: '2021-09-06T12:03:42.024484+00:00'
+          format: 'date-time'
+        updated:
+          type: string
+          example: '2021-09-06T12:03:42.024504+00:00'
+          format: 'date-time'
+        is_finished:
+          type: boolean
+          example: false
+        revision_id:
+          type: integer
+          example: 1
+        metadata:
+          $ref: '#/components/schemas/ResearchWorkflowDefinitionModel'
+        links:
+          $ref: '#/components/schemas/ResearchWorkflowLinkModel'
+        graph:
+          $ref: '#/components/schemas/ResearchWorkflowGraph'
+
+    ResearchWorkflowGraph:
+      title: Research Workflow Graph
+      description: |
+        Graph representing the workflow behind the workflow model. Each node is an Execution Compendium and the edges
+        is the relation between the Execution Compendia. Using this graph is possible follow the complete execution
+        workflow of an project/scientific experiment. This graph model is created following the JSON Graph Format (JGF) proposal.
+      type: object
+      additionalProperties: false
+      properties:
+        directed:
+          type: boolean
+          example: true
+          description: |
+            Flag indicating if the graph is directed. In the service, 
+            this field is always `true`. We use it to don't change the
+            JSON Graph Format (JGF) Schema.
+        type:
+          type: string
+          enum:
+            - workflow
+          description: Graph type
+        nodes:
+          type: object
+          description: Graph nodes
+          properties:
+            metadata:
+              description: Node metadata
+              type: object
+              additionalProperties: false
+              properties:
+                files:
+                  description: List of files available in the node (Inputs and outputs)
+                  type: array
+                  items:
+                    type: object
+                    description: Node file definition object.
+                    additionalProperties: false
+                    properties:
+                      type:
+                        description: File type
+                        example: 'text'
+                        type: string
+                      key:
+                        description: File key identifier
+                        example: 'file-name.txt'
+                        type: string
+                      checksum:
+                        description: File checksum
+                        example: 'md5:60fe4b019cfa3809c83fc373fa4b0c48'
+                        type: string
+        edges:
+          description: List of graph edges
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              source:
+                description: Execution ID source in the graph edge relationship
+                example: 'yf7ax-j3y65'
+                type: string
+              target:
+                description: Execution ID target in the graph edge relationship
+                example: '09fj3-awh14'
+                type: string
+              metadata:
+                description: Edge relationship metadata
+                type: object
+                additionalProperties: false
+                properties:
+                  related_files:
+                    description: Key of the file used by the system to create the edge between the nodes
                     type: array
                     items:
-                        $ref: '#/components/schemas/ExecutionCompendiumFileEntryModel'
+                      type: object
+                      additionalProperties: false
+                      properties:
+                        key:
+                          description: File key identifier. This is the file used to link the nodes (Source and Target).
+                          example: 'file-name.txt'
+                          type: string
 
-        # Links
-        ExecutionCompendiumLinks:
-            title: Execution Compendium Links
-            description: 'Execution Compendium links'
-            type: object
-            properties:
-                self:
+    #
+    # Execution Compendium (Draft and Published) Schemas
+    #
+    ExecutionCompendiumMetadata:
+      title: Execution Compendium metadata
+      description: 'Metadata used to describe the Execution Compendium content (inputs, outputs, environments)'
+      type: object
+      additionalProperties: false
+      properties:
+        title:
+          type: string
+          description: Title of the compendium
+        description:
+          type: string
+          description: Description of the compendium
+        execution:
+          type: object
+          description: Execution metadata
+          additionalProperties: false
+          properties:
+            environment:
+              type: object
+              description: Execution environment description
+              additionalProperties: false
+              properties:
+                uri:
+                  type: string
+                  description: URI to the software used to execute the experiment execution
+                name:
+                  type: string
+                  description: Software name
+                version:
+                  type: string
+                  description: Software version
+            meta:
+              type: object
+              additionalProperties: true
+              description: Environment metadata generated by the descriptor
+        data:
+          type: object
+          description: Data (Input and Output) used in the execution
+          additionalProperties: false
+          properties:
+            inputs:
+              description: Input files used in the the experiment execution
+              type: array
+              items:
+                type: object
+                additionalProperties: false
+                properties:
+                  key:
                     type: string
-                    description: 'Link to the current Execution Compendium draft'
-                    example: 'https://127.0.0.1:5000/pipeline/1/compendium/2k7cgyek84/draft'
-                latest:
+                    description: File key (Same as defined in the files section)
+            outputs:
+              description: output files generated in the the experiment execution
+              type: array
+              items:
+                type: object
+                additionalProperties: false
+                properties:
+                  key:
                     type: string
-                    description: 'Link to the latest version of the Execution Compendium associated to the draft'
-                    example: 'https://127.0.0.1:5000/pipeline/1/compendium/2k7cgyek84/versions/latest'
-                compendium:
-                    type: string
-                    description: 'Link to the parent of the Execution Compendium'
-                    example: 'https://127.0.0.1:5000/pipeline/1/compendium/2k7cgyek84'
-                publish:
-                    type: string
-                    description: 'Link to publish a new Execution Compendium version from the draft'
-                    example: 'https://127.0.0.1:5000/pipeline/1/compendium/2k7cgyek84/draft/actions/publish'
-                versions:
-                    type: string
-                    description: 'Link to all Execution Compendium versions'
+                    description: File key (Same as defined in the files section)
 
-        # Executiom Compendium Model (published)
-        ExecutionCompendiumModel:
-            title: Execution Compendium Model
-            description: 'Execution Compendium Model object'
-            type: object
-            properties:
+    ExecutionCompendiumDraftFile:
+      title: Execution Compendium draft file
+      description: 'Define files in the Execution Compendium draft'
+      type: object
+      properties:
+        key:
+          type: string
+          example: 'input_file.txt'
+
+    ExecutionCompendiumBaseModel:
+      title: Execution Compendium base Model
+      description: Model representing the base form of a Execution Compendium.
+      type: object
+      properties:
+        metadata:
+          $ref: '#/components/schemas/ExecutionCompendiumMetadata'
+
+    ExecutionCompendiumSystemModel: # System model
+      title: Execution Compendium System Model
+      description: Model representing the form of a Execution Compendium created by the service.
+      allOf:
+        - $ref: '#/components/schemas/ExecutionCompendiumBaseModel'
+        - type: object
+          properties:
+            id:
+              type: string
+              description: Execution Compendium model ID for a specific version
+            created:
+              type: string
+              description: Record publication date (EDTF level 0 format).
+            updated:
+              type: string
+              description: Record publication date (EDTF level 0 format).
+            is_published:
+              type: boolean
+              description: Flag indicating if the compendium is already published
+            revision_id:
+              type: integer
+              description: Compendium revision ID
+            is_draft:
+              type: boolean
+              description: Flag indicating if the compendium is a draft
+            parent:
+              type: object
+              additionalProperties: false
+              properties:
                 id:
+                  type: string
+                  description: Execution Compendium Parent ID. Used to identify all versions of a Compendium.
+            versions:
+              type: object
+              description: Execution Compendium versions information.
+              properties:
+                is_latest:
+                  type: boolean
+                  description: Flag indicating if the selected version is the latest
+                is_latest_draft:
+                  type: boolean
+                  description: Flag indicating if the selected draft version is the latest
+                index:
+                  type: integer
+                  description: Version index
+
+    ExecutionCompendiumDraftModel: # Draft model
+      title: Execution Compendium Draft model
+      description: 'Execution Compendium Draft model'
+      allOf:
+        - $ref: '#/components/schemas/ExecutionCompendiumSystemModel'
+        - type: object
+          properties:
+            expires_at:
+              type: string
+              example: '2022-03-26 21:00:29.669589'
+              format: 'date-time'
+
+    ExecutionCompendiumPublishedModel: # Published model
+      $ref: '#/components/schemas/ExecutionCompendiumSystemModel'
+
+      title: Execution Compendium Published model
+      description: 'Execution Compendium Published model'
+
+    #
+    # Files
+    #
+    ExecutionCompendiumFileEntryBaseModel:
+      title: Base Execution Compendium File metadata model.
+      description: 'Model with the base fields for a file entry in the service.'
+      type: object
+      properties:
+        updated:
+          type: string
+          example: '2021-09-06T00:50:12.165072+00:00'
+          format: 'date-time'
+        key:
+          type: string
+          example: 'output_file.txt'
+        links:
+          $ref: '#/components/schemas/ExecutionCompendiumLinkModel'
+        created:
+          type: string
+          example: '2021-09-06T00:50:12.162515+00:00'
+        status:
+          type: string
+          enum: [ pending, completed ]
+        metadata:
+          type: object
+          description: 'Metadata extracted from the defined tile'
+
+    ExecutionCompendiumFileEntryCommitedModel:
+      $ref: '#/components/schemas/ExecutionCompendiumFileEntryBaseModel'
+
+      title: Execution Compendium File commited metadata model.
+      description: 'Model with the extra fields generated when a file is commited in the service.'
+      type: object
+      properties:
+        checksum:
+          type: string
+          example: 'md5:60fe4b019cfa3809c83fc373fa4b0c48'
+          description: MD5 Checksum calculated from file uploaded when the file entity is commited.
+        mimetype:
+          type: string
+          example: 'application/vnd.autopackage'
+          description: Mimetype of the uploaded file.
+        file_id:
+          type: string
+          example: 'd7b328ec-9ce5-4df1-9791-0fd4002c23dd'
+          description: File ID generated internally.
+        bucket_id:
+          type: string
+          example: '1cfb52ce-6805-40e5-bb73-9c0ed53cbb59'
+          description: Bucket ID where the file content is stored internally.
+        size:
+          type: integer
+          example: 348506
+          description: File size in bytes.
+        storage_class:
+          type: string
+          example: 'S'
+          description: 'Class of the usage storage to connect to the bucket'
+        version_id:
+          type: string
+          example: '3e9adb0e-b123-41aa-a083-a0a40a45f928'
+          description: 'File version ID'
+
+    ExecutionCompendiumFilesDefinitionModel:
+      title: Execution Compendium files metadata model.
+      description: 'Execution Compendium files metadata model.'
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          example: true
+          description: |
+            Flag indicating if the files are enabled in the Execution Compendium. 
+            If false, the user can't upload files.
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExecutionCompendiumFileEntryBaseModel'
+        links:
+          $ref: '#/components/schemas/ExecutionCompendiumLinkModel'
+
+    #
+    # Execution schemas
+    #
+    ExecutionDefinitionModel:
+      title: Execution definition model
+      description: Model with the basic metadata about the Execution job.
+      additionalProperties: false
+      properties:
+        workflow_id:
+          type: string
+          example: 'my-workflow-id'
+          description: Identifier of the Workflow will be runned.
+        service:
+          type: string
+          example: 'execution-reprozip-serial'
+          description: Service used to run the Workflow.
+          enum:
+            - 'execution-reprozip-serial'
+
+    ExecutionCreatedModel:
+      title: Execution Job Created model
+      description: Model of a Execution Job created in the service.
+      allOf:
+        - $ref: '#/components/schemas/ExecutionDefinitionModel'
+        - type: object
+          properties:
+            id:
+              type: string
+              example: 'fb2a5db3-a73d-4fca-8ba2-e45f143b7615'
+              description: Execution Job identifier.
+            project_id:
+              type: string
+              description: Project identifier
+            status:
+              type: string
+              example: 'created'
+              enum:
+                - created
+                - failed
+                - queued
+                - finished
+                - running
+                - canceled
+            links:
+              $ref: '#/components/schemas/ExecutionLinkModel'
+
+    ExecutionServiceModel:
+      title: Execution Service model
+      description: Execution service used to execute the Job.
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          description: Execution Job service Identifier
+          example: 'execution-reprozip-serial'
+        metadata:
+          type: object
+          description: Execution Job service Metadata
+          additionalProperties: false
+          properties:
+            title:
+              type: string
+              description: Execution service title
+              example: 'Reana-Reprozip Execution plugin (Serial execution mode)'
+            description:
+              type: string
+              description: Description of the execution service.
+            supported_descriptors:
+              type: array
+              description: Descriptors tools supported by the execution service.
+              items:
+                type: string
+                description: Name and version of the supported descriptors.
+                example: 'storm-core>=1.0,<2'
+        required_fields:
+          type: array
+          description: Fields must be defined in the Execution Job request to execute the job.
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+                description: Field title
+              description:
+                type: string
+                description: Field description
+              field_name:
+                type: string
+                description: Field name. This name must be used in the Execution Job start request.
+
+    # Deposit schemas
+    DepositDefinitionModel:
+      title: Deposit Job definition model
+      description: Model with the basic metadata about the Deposit job.
+      additionalProperties: false
+      properties:
+        workflows:
+          type: array
+          description: identifiers of the Research Workflows to be exported.
+          items:
+            type: string
+            example: 'my-workflow-id'
+            description: Identifier of the Workflow will be runned.
+        service:
+          type: string
+          example: 'deposit-inveniordm'
+          description: Service where the data will be deposited.
+          enum:
+            - 'deposit-gkhub'
+            - 'deposit-inveniordm'
+        customizations:
+          type: object
+          description: |
+            Customization object. Using this field, you can change fields of 
+            the Research Workflow metadata.
+
+    DepositCreatedModel:
+      title: Deposit Job Created model
+      description: Model of a Deposit Job created in the service.
+      allOf:
+        - $ref: '#/components/schemas/DepositDefinitionModel'
+        - type: object
+          properties:
+            id:
+              type: string
+              example: 'bdc3c809-1b82-4e3e-985a-fb183d047e0d'
+              description: Deposit Job identifier.
+            project_id:
+              type: string
+              description: Project identifier
+            status:
+              type: string
+              example: 'created'
+              enum:
+                - created
+                - failed
+                - queued
+                - finished
+                - running
+                - canceled
+            links:
+              $ref: '#/components/schemas/DepositLinkModel'
+
+    DepositServiceModel:
+      title: Deposit Service model
+      description: Deposit service where the Research Workflow and its data will be stored.
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          description: Execution Job service Identifier
+          example: 'deposit-gkhub'
+        metadata:
+          type: object
+          description: Execution Job service Metadata
+          additionalProperties: false
+          properties:
+            title:
+              type: string
+              description: Title of the deposit service
+              example: 'Deposit plugin to send Storm WS workflows to GEO Knowledge Hub instances.'
+            description:
+              type: string
+              description: Description of the deposit service.
+            customizable_metadata_fields: # ToDo: Improve the decription of this field.
+              type: object
+              description: Customization object to change metadata fields.
+        required_fields:
+          type: array
+          description: Fields must be defined in the Deposit Job request to deposit the Research Workflow.
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+                description: Field title
+              description:
+                type: string
+                description: Field description
+              field_name:
+                type: string
+                description: Field name. This name must be used in the Deposit Job start request.
+
+    #
+    # Links schemas
+    #
+
+    # General links
+    PaginationLinks:
+      title: Pagination Link
+      description: Pagination link model
+      oneOf:
+        - type: object
+          properties:
+            self:
+              type: string
+              description: Link to the current search result
+        - type: object
+          properties:
+            self:
+              type: string
+              description: Link to the current search result
+            next:
+              type: string
+              description: Link to the next page of the paginated result
+        - type: object
+          properties:
+            self:
+              type: string
+              description: Link to the current search result
+            prev:
+              type: string
+              description: Link to the previous page of the paginated result.
+        - type: object
+          properties:
+            self:
+              type: string
+              description: Link to the current search result
+            next:
+              type: string
+              description: Link to the next page of the paginated result
+            prev:
+              type: string
+              description: Link to the previous page of the paginated result.
+
+    # Execution Compendium Files links
+    ExecutionCompendiumFileLinkBaseModel:
+      title: Base model for Execution Compendium file links
+      type: object
+      properties:
+        self:
+          type: string
+          description: Link to the file metadata itself
+          example: 'http://storm-ws.server/projects/{project-id}/compendia/{compendium-id}/draft/files/{file-key}'
+        content:
+          type: string
+          description: Link to the file content (Binary)
+          example: 'http://storm-ws.server/projects/{project-id}/compendia/{compendium-id}/draft/files/{file-key}/content'
+
+    ExecutionCompendiumLinkModel:
+      title: Execution Compendium file link
+      description: 'Execution Compendium file link model.'
+      type: object
+      oneOf:
+        - $ref: '#/components/schemas/ExecutionCompendiumFileLinkBaseModel'
+        - $ref: '#/components/schemas/ExecutionCompendiumFileLinkBaseModel'
+          type: object
+          title: Execution Compendium File Link uncommited
+          description: Link model for files uncommited in the sistem. In this case, the user can commit the file.
+          properties:
+            commit:
+              type: string
+              description: Link to commit the file
+              example: 'http://storm-ws.server/projects/{project-id}/compendia/{compendium-id}/draft/files/{file-key}/commit'
+
+    # Research Workflow links
+    ResearchWorkflowLinkModel:
+      title: Research Workflow Link model
+      description: Link model for Research Workflow objects
+      type: object
+      additionalProperties: false
+      properties:
+        actions:
+          type: object
+          additionalProperties: false
+          properties:
+            add-compendium:
+              type: string
+              description: Link to add a published Execution Compendium in the Workflow graph.
+              example: |
+                'http://storm-ws.server/projects/{project-id}/workflows/{workflow-id}/actions/add/compendium/{compendium-id}'
+            delete-compendium:
+              type: string
+              description: |
+                Link to delete a Execution Compendium from the 
+                Workflow graph. The compendium is only removed
+                from the Graph.
+              example: |
+                'http://storm-ws.server/projects/{project-id}/workflows/{workflow-id}/actions/delete/compendium/{compendium-id}'
+            finish:
+              type: string
+              description: Link to finish the Workflow. A finished workflow can't be modified.
+              example: |
+                'http://storm-ws.server/projects/{project-id}/workflows/{workflow-id}/actions/{compendium-id}'
+        self:
+          type: string
+          description: Link to the workflow itself
+          example: |
+            'http://storm-ws.server/projects/{project-id}/workflows/{workflow-id}'
+    
+    
+    
+
+    # Execution links
+    ExecutionLinkModel:
+      title: Execution Link
+      description: Links used in the Execution models
+      type: object
+      additionalProperties: false
+      properties:
+        actions:
+          title: Action links
+          type: object
+          additionalProperties: false
+          properties:
+            start:
+              type: string
+              description: Link to start the Execution Job
+              example: 'http://storm-ws.server/project/{project-id}/executions/{execution-id}/actions/start'
+            cancel:
+              type: string
+              description: Link to stop a running Execution Job
+              example: 'http://storm-ws.server/project/{project-id}/executions/{execution-id}/actions/cancel'
+        self:
+          description: Link to the Execution Job metadata itself
+          example: 'http://storm-ws.server/project/{project-id}/executions/{execution-id}'
+
+    # Deposit links
+    DepositLinkModel:
+      title: deposit Link
+      description: Links used in the deposit models
+      type: object
+      additionalProperties: false
+      properties:
+        actions:
+          title: Action links
+          type: object
+          additionalProperties: false
+          properties:
+            start:
+              type: string
+              description: Link to start the Execution Job
+              example: 'http://storm-ws.server/project/{project-id}/deposits/{deposit-id}/actions/start'
+            cancel:
+              type: string
+              description: Link to stop a running Execution Job
+              example: 'http://storm-ws.server/project/{project-id}/deposits/{deposit-id}/actions/cancel'
+        self:
+          description: Link to the Execution Job metadata itself
+          example: 'http://storm-ws.server/project/{project-id}/deposits/{deposit-id}'
+
+  requestBodies:
+    #
+    # General request bodies
+    #
+    BinaryFilesRequestBody:
+      required: true
+      content:
+        application/octet-stream:
+          schema:
+            type: string
+            format: binary
+
+    #
+    # Project request bodies
+    #
+    ProjectDefinitionModelRequestBody:
+      description: 'A JSON document describing the project'
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProjectDefinitionModel'
+
+    #
+    # Execution Compendium Draft request bodies
+    #
+    ExecutionCompendiumDraftRequestBody:
+      description: 'A JSON document with the metadata used to create a new Execution Compendium Draft.'
+      required: true
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/ExecutionCompendiumBaseModel'
+              - $ref: '#/components/schemas/ExecutionCompendiumDraftModel'
+
+    #
+    # Execution Compendium Draft (Files) request bodies
+    #
+    ExecutionCompendiumDraftFileDefinitionRequestBody:
+      description: 'A JSON document with the files definitions'
+      required: true
+      content:
+        application/json:
+          schema:
+            type: array
+            minItems: 1
+            items:
+              $ref: '#/components/schemas/ExecutionCompendiumDraftFile'
+
+    #
+    # Workflow
+    #
+    ResearchWorkflowDefinitionModelRequestBody:
+      description: 'A JSON document with the metadata used to create a new Research Workflow'
+      required: true
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/ResearchWorkflowCreatedModel'
+              - type: object
+                properties:
+                  id:
                     type: string
-                    example: '2k7cgyek84'
-                updated:
-                    type: string
-                    example: '2021-09-06T00:49:22.601795+00:00'
-                    format: 'date-time'
-                revision_id:
+                    description: Research Workflow ID
+                    example: workflow-example-id
+                  metadata:
+                    $ref: '#/components/schemas/ResearchWorkflowDefinitionModel'
+
+    #
+    # Execution
+    #
+    ExecutionDefinitionModelRequestBody:
+      description: |
+        'A JSON document with the metadata used to create/update a Execution Job.'
+      required: true
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/ExecutionDefinitionModel'
+              - $ref: '#/components/schemas/ExecutionCreatedModel'
+
+    # Deposit
+    DepositDefinitionModelRequestBody:
+      description: |
+        'A JSON document with the metadata used to create/update a Deposit Job.'
+      required: true
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/DepositDefinitionModel'
+              - $ref: '#/components/schemas/DepositCreatedModel'
+
+  responses:
+    #
+    # General responses
+    #
+    Root:
+      description: 'The landing page provides the version of service.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RootType'
+
+    Error:
+      description: 'The return for actions that cause an server exception.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExceptionType'
+
+    AccessDeniedError:
+      description: The return for actions which authenticated user don't have permissions to do.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExceptionType'
+            properties:
+              status: 403
+              message: Unauthorized access.
+
+    BadRequestError:
+      description: The return for actions which user don't use the required input/object format.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExceptionType'
+            properties:
+              status: 400
+              message: A validation error occurred
+              errors:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                      example: 'metadata.title'
+                      description: 'Name of the field with error in the object'
+                    messages:
+                      type: array
+                      items:
+                        type: string
+                      example: [ 'Missing data for required field' ]
+
+    BinaryResponseBody:
+      description: 'Binary file'
+      content:
+        application/octet-stream:
+          schema:
+            type: string
+            format: binary
+
+    #
+    # Project Responses
+    #
+    ProjectAgentResponseBody:
+      description: 'A JSON document with the Project agents description.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProjectAgentModel'
+
+    ProjectCreatedModelResponseBody:
+      description: 'A JSON document with the created project'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProjectCreatedModel'
+
+    ListOfProjectCreatedModelResponseBody:
+      description: 'A JSON document with a list of current user project.'
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              hits:
+                type: object
+                properties:
+                  hits:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectCreatedModel'
+                  total:
                     type: integer
-                    example: 3
-                node:
-                    $ref: '#/components/schemas/ExecutionCompendiumDraft'
-                links:
-                    $ref: '#/components/schemas/ExecutionCompendiumLinks'
+                    example: 1
+              sortBy:
+                type: string
+                enum:
+                  - 'newest'
+                  - 'bestmatch'
+                  - 'oldest'
+                  - 'version'
+              links:
+                $ref: '#/components/schemas/PaginationLinks'
+
+    ResearchWorkflowDefinitionModelResponseBody:
+      description: 'A JSON document with the Research Pipeline'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResearchWorkflowCreatedModel'
+
+    #
+    # Execution Compendium (Draft and Published records) responses
+    #
+    ExecutionCompendiumDraftModelResponseBody:
+      description: 'A JSON document with the Execution Compendium Draft metadata'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExecutionCompendiumDraftModel'
+
+    ExecutionCompendiumPublishedModelResponseBody:
+      description: 'A JSON document with the Execution Compendium content.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExecutionCompendiumPublishedModel'
+
+    ListOfExecutionCompendiumPublishedModelResponseBody:
+      description: 'A JSON document with a list of Execution Compendia (Published only).'
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/ExecutionCompendiumPublishedModel'
+
+    ListOfExecutionCompendiumDraftModelResponseBody:
+      description: 'A JSON document with a list of Execution Compendia (Draft only).'
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/ExecutionCompendiumDraftModel'
+
+    ListOfExecutionCompendiumMixedModelResponseBody:
+      description: 'A JSON document with a list of Execution Compendia (Draft and Published).'
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/ExecutionCompendiumDraftModel'
+
+    #
+    # Execution Compendium (Draft and Published records) files responses
+    #
+    ExecutionCompendiumFilesDefinitionModelResponseBody:
+      description: 'A JSON document with the Execution Compendia files description'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExecutionCompendiumFilesDefinitionModel'
+
+    ExecutionCompendiumFileEntryModelResponseBody:
+      description: 'A JSON document with the Execution Compendium file entry'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExecutionCompendiumFileEntryBaseModel'
+
+    ExecutionCompendiumFileMetadataModelResponseBody:
+      description: 'A JSON document with the complete description of a commited file'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExecutionCompendiumFileEntryCommitedModel'
+
+    #
+    # Research Workflow
+    #
+    ResearchWorkflowAgentResponseBody:
+      description: 'A JSON document with the Research Workflow agents description.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResearchWorkflowAgentModel'
+
+    ResearchWorkflowCreatedModelResponseBody:
+      description: 'A JSON document with the metadata of a Research Workflow'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResearchWorkflowCreatedModel'
+
+    ListOfResearchWorkflowCreatedModelResponseBody:
+      description: 'A JSON document with a list of Research Workflow that the authenticated user can access.'
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              hits:
+                type: object
+                properties:
+                  hits:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ResearchWorkflowCreatedModel'
+                  total:
+                    type: integer
+                    example: 1
+              sortBy:
+                type: string
+                enum:
+                  - 'newest'
+                  - 'bestmatch'
+                  - 'oldest'
+                  - 'version'
+              links:
+                $ref: '#/components/schemas/PaginationLinks'
+
+    #
+    # Execution
+    #
+    ExecutionCreatedModelResponseBody:
+      description: 'A JSON document with the metadata of an Execution Job.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExecutionCreatedModel'
+
+    ListOfExecutionCreatedModelResponseBody:
+      description: 'A JSON document with a list of Execution Job that the authenticated user can access.'
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              hits:
+                type: object
+                properties:
+                  hits:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ExecutionCreatedModel'
+                  total:
+                    type: integer
+                    example: 1
+              sortBy:
+                type: string
+                enum:
+                  - 'newest'
+                  - 'bestmatch'
+                  - 'oldest'
+                  - 'version'
+              links:
+                $ref: '#/components/schemas/PaginationLinks'
+
+    ListOfExecutionServiceResponseBody:
+      description: 'A JSON document with the list of available Execution Services to run the jobs'
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/ExecutionServiceModel'
+
+    #
+    # Deposit
+    #
+    DepositCreatedModelResponseBody:
+      description: 'A JSON document with the metadata of a Deposit Job.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DepositCreatedModel'
+
+    ListOfDepositCreatedModelResponseBody:
+      description: 'A JSON document with a list of Deposit Job that the authenticated user can access.'
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              hits:
+                type: object
+                properties:
+                  hits:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DepositCreatedModel'
+                  total:
+                    type: integer
+                    example: 1
+              sortBy:
+                type: string
+                enum:
+                  - 'newest'
+                  - 'bestmatch'
+                  - 'oldest'
+                  - 'version'
+              links:
+                $ref: '#/components/schemas/PaginationLinks'
+
+    ListOfDepositServiceResponseBody:
+      description: 'A JSON document with the list of available Deposit Services to run the jobs'
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/DepositServiceModel'
 
 
-    requestBodies:
-
-        #
-        # General request bodies
-        #
-        BinaryFilesRequestBody:
-            required: true
-            content:
-                application/octet-stream:
-                    schema:
-                        type: string
-                        format: binary
-
-        #
-        # Project bodies
-        #
-        ProjectPipelineDefinitionRequestBody:
-            required: true
-            content:
-              application/json:
-                schema:
-                    $ref: '#/components/schemas/ProjectPipelineDefinitionModel'
-            description: 'A JSON document with the informations that will be used to identify and describe the generated graph'
-
-        #
-        # Files Request bodies
-        #
-        ExecutionCompendiumDraftFileDefinitionRequestBody:
-            description: 'A JSON document with the files definitions'
-            required: true
-            content:
-                application/json:
-                    schema:
-                        $ref: '#/components/schemas/ExecutionCompendiumDraftFile'
-
-
-        #
-        # Execution Compendium Draft request bodies
-        #
-        ExecutionCompendiumDraftRequestBody:
-            description: 'A JSON document describing the Execution Compendium Draft.'
-            required: true
-            content:
-                application/json:
-                    schema:
-                        $ref: '#/components/schemas/ExecutionCompendiumDraft'
-
-        ProjectDefinitionModelRequestBody:
-            description: 'A JSON document describing the project'
-            required: true
-            content:
-                application/json:
-                    schema:
-                        $ref: '#/components/schemas/ProjectDefinitionModel'
-
-
-    responses:
-
-        #
-        # General responses
-        #
-        Root:
-            description: 'The landing page provides the version of service.'
-            content:
-                application/json:
-                    schema:
-                        $ref: '#/components/schemas/RootType'
-
-        Error:
-            description: 'The return for actions that cause an server exception.'
-            content:
-                application/json:
-                    schema:
-                        $ref: '#/components/schemas/ExceptionType'
-
-
-        BinaryResponseBody:
-            description: 'Binary file'
-            content:
-                application/octet-stream:
-                    schema:
-                        type: string
-                        format: binary
-
-        #
-        # bdcrrm
-        #
-        ProjectCreatedModelResponseBody:
-            description: 'A JSON document with the created project'
-            content:
-                application/json:
-                    schema:
-                        $ref: '#/components/schemas/ProjectCreatedModel'
-
-        ListOfProjectCreatedModelResponseBody:
-            description: 'A JSON document with a list of current user project.'
-            content:
-                application/json:
-                    schema:
-                        type: array
-                        items:
-                            $ref: '#/components/schemas/ProjectCreatedModel'
-
-        ProjectPipelineModelResponseBody:
-            description: 'A JSON document with the Research Pipeline'
-            content:
-                application/json:
-                    schema:
-                        $ref: '#/components/schemas/ProjectPipelineModel'
-
-
-        ListOfProjectPipelineModelResponseBody:
-            description: 'A JSON document with a list of ProjectPipeline available.'
-            content:
-                application/json:
-                    schema:
-                        type: array
-                        items:
-                            $ref: '#/components/schemas/ProjectPipelineModel'
-
-        #
-        # Invenio Framework based models
-        #
-        ExecutionCompendiumModelResponseBody:
-            description: 'A JSON document with the Execution Compendium content.'
-            content:
-                application/json:
-                    schema:
-                        $ref: '#/components/schemas/ExecutionCompendiumModel'
-
-        ListOfExecutionCompendiumModelResponseBody:
-            description: 'A JSON document with a list of Execution Compendia.'
-            content:
-                application/json:
-                    schema:
-                        type: array
-                        items:
-                            $ref: '#/components/schemas/ExecutionCompendiumModel'
-
-        ExecutionCompendiumFilesDefinitionModelResponseBody:
-            description: 'A JSON document with the Execution Compendia files description'
-            content:
-                application/json:
-                    schema:
-                        $ref: '#/components/schemas/ExecutionCompendiumFilesDefinitionModel'
-
-        ExecutionCompendiumFileEntryModelResponseBody:
-            description: 'A JSON document with the Execution Compendium file entry'
-            content:
-                application/json:
-                    schema:
-                        $ref: '#/components/schemas/ExecutionCompendiumFileEntryModel'
-
-        ExecutionCompendiumFileMetadataModelResponseBody:
-            description: 'A JSON document with the complete description of a commited file'
-            content:
-                application/json:
-                    schema:
-                        $ref: '#/components/schemas/ExecutionCompendiumFileMetadataModel'
+security:
+  - ApiKeyAuth: [ ]
