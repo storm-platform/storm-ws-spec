@@ -55,8 +55,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ListOfProjectCreatedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
     post:
       tags:
@@ -74,6 +80,10 @@ paths:
           $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /projects/{project_id}:
     parameters:
@@ -87,8 +97,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ProjectCreatedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
     put:
       tags:
@@ -104,6 +120,10 @@ paths:
           $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
     delete:
       tags:
@@ -113,8 +133,14 @@ paths:
       responses:
         '200':
           description: Deleted
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   # Base actions
   /projects/{project_id}/actions/finish:
@@ -131,8 +157,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ProjectCreatedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   # Admin actions
   /projects/{project_id}/admin/actions/add/contributor/{agent_id}:
@@ -150,8 +182,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ProjectCreatedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
     delete:
       tags:
@@ -162,8 +200,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ProjectCreatedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /projects/{project_id}/admin/actions/add/owner/{agent_id}:
     parameters:
@@ -180,8 +224,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ProjectCreatedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
     delete:
       tags:
@@ -192,8 +242,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ProjectCreatedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /projects/{project_id}/admin/agents:
     parameters:
@@ -208,8 +264,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ProjectAgentResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   #
   # Execution Compendium (Draft)
@@ -229,12 +291,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ListOfExecutionCompendiumPublishedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
     post:
       tags:
@@ -253,9 +317,9 @@ paths:
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
   /projects/{project_id}/compendia/{compendium_id}/draft:
     parameters:
@@ -281,9 +345,9 @@ paths:
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
     get:
       tags:
@@ -293,12 +357,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ExecutionCompendiumDraftModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
     put:
       tags:
@@ -317,9 +383,9 @@ paths:
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
     delete:
       tags:
@@ -329,12 +395,14 @@ paths:
       responses:
         '200':
           description: Deleted
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
   #
   # Execution Compendium (Draft - Files)
@@ -354,10 +422,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ExecutionCompendiumFilesDefinitionModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
     post:
       tags:
@@ -376,9 +448,9 @@ paths:
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
   /projects/{project_id}/compendia/{compendium_id}/draft/files/{file_key}:
     parameters:
@@ -426,9 +498,9 @@ paths:
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
     put:
       tags:
@@ -446,9 +518,9 @@ paths:
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
   /projects/{project_id}/compendia/{compendium_id}/draft/files/{file_key}/commit:
     parameters:
@@ -471,12 +543,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ExecutionCompendiumFileMetadataModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
   /projects/{project_id}/compendia/{compendium_id}/draft/actions/publish:
     parameters:
@@ -497,12 +571,14 @@ paths:
       responses:
         '202':
           $ref: '#/components/responses/ExecutionCompendiumPublishedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
   #
   # Execution Compendium (Published)
@@ -520,12 +596,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ExecutionCompendiumPublishedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
   #
   # Execution Compendium (Published - Files)
@@ -543,12 +621,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ExecutionCompendiumFilesDefinitionModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
   /projects/{project_id}/compendia/{compendium_id}/files/{file_key}:
     parameters:
@@ -564,12 +644,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ExecutionCompendiumFileMetadataModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
   /projects/{project_id}/compendia/{compendium_id}/files/{file_key}/content:
     parameters:
@@ -585,12 +667,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/BinaryResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
   #
   # Execution Compendium (Published - Versions)
@@ -621,12 +705,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ExecutionCompendiumDraftModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
   /projects/{project_id}/compendia/{compendium_id}/versions/latest:
     parameters:
@@ -642,12 +728,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ExecutionCompendiumPublishedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
   #
   # User Workspace (Projects and Compendia)
@@ -662,12 +750,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ListOfProjectCreatedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
   /user/projects/{project_id}/compendia:
     parameters:
@@ -682,12 +772,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ListOfExecutionCompendiumMixedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
   #
   # Research Workflow
@@ -713,12 +805,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ListOfResearchWorkflowCreatedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
     post:
       tags:
@@ -735,9 +829,9 @@ paths:
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
   /projects/{project_id}/workflows/{workflow_id}:
     parameters:
@@ -752,12 +846,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ResearchWorkflowCreatedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
     put:
       tags:
@@ -776,9 +872,9 @@ paths:
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
     delete:
       tags:
@@ -788,12 +884,14 @@ paths:
       responses:
         '200':
           description: Deleted
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
   /projects/{project_id}/workflows/{workflow_id}/actions/add/compendium/{compendium_id}:
     parameters:
@@ -809,12 +907,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ResearchWorkflowCreatedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
   /projects/{project_id}/workflows/{workflow_id}/actions/delete/compendium/{compendium_id}:
     parameters:
@@ -830,12 +930,14 @@ paths:
       responses:
         '200':
           description: Deleted
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
   /projects/{project_id}/workflows/{workflow_id}/actions/finish:
     parameters:
@@ -850,8 +952,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ResearchWorkflowCreatedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /projects/{project_id}/workflows/{workflow_id}/admin/actions/add/contributor/{agent_id}:
     parameters:
@@ -869,8 +977,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ResearchWorkflowCreatedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /projects/{project_id}/workflows/{workflow_id}/admin/actions/delete/contributor/{agent_id}:
     parameters:
@@ -887,8 +1001,14 @@ paths:
       responses:
         '200':
           description: Deleted
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /projects/{project_id}/workflows/{workflow_id}/admin/agents:
     parameters:
@@ -904,8 +1024,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ResearchWorkflowAgentResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   #
   # Execution Job
@@ -923,12 +1049,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ListOfExecutionCreatedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
     post:
       tags:
@@ -948,9 +1076,9 @@ paths:
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
   /projects/{project_id}/executions/{execution_id}:
     parameters:
@@ -966,12 +1094,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ExecutionCreatedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
     put:
       tags:
@@ -989,9 +1119,9 @@ paths:
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
     delete:
       tags:
@@ -1002,8 +1132,14 @@ paths:
       responses:
         '200':
           description: Deleted
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /projects/{project_id}/executions/services:
     parameters:
@@ -1018,12 +1154,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ListOfExecutionServiceResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
   /projects/{project_id}/executions/{execution_id}/actions/start:
     parameters:
@@ -1039,12 +1177,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ExecutionCreatedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
   /projects/{project_id}/executions/{execution_id}/actions/cancel:
     parameters:
@@ -1060,12 +1200,14 @@ paths:
         '200':
           # ToDo: Define a more specific return (e.g., with the status field equal to `canceled`)
           $ref: '#/components/responses/ExecutionCreatedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
   #
   # Deposit Job
@@ -1083,12 +1225,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ListOfDepositCreatedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
     post:
       tags:
@@ -1108,9 +1252,9 @@ paths:
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
   /projects/{project_id}/deposits/{deposit_id}:
     parameters:
@@ -1126,12 +1270,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/DepositCreatedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
     put:
       tags:
@@ -1150,9 +1296,9 @@ paths:
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
     delete:
       tags:
@@ -1163,8 +1309,14 @@ paths:
       responses:
         '200':
           description: Deleted
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /projects/{project_id}/deposits/services:
     parameters:
@@ -1180,12 +1332,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/ListOfDepositServiceResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
   /projects/{project_id}/deposits/{deposit_id}/actions/start:
     parameters:
@@ -1201,12 +1355,14 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/DepositCreatedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
   /projects/{project_id}/deposit/{deposit_id}/actions/cancel:
     parameters:
@@ -1222,12 +1378,14 @@ paths:
         '200':
           # ToDo: Define a more specific return (e.g., with the status field equal to `canceled`)
           $ref: '#/components/responses/DepositCreatedModelResponseBody'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '403':
           $ref: '#/components/responses/AccessDeniedError'
         '404':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/NotFoundError'
         '500':
-          $ref: '#/components/responses/Error'
+          $ref: '#/components/responses/InternalServerError'
 
 components:
   securitySchemes:
@@ -2212,7 +2370,7 @@ components:
             description:
               type: string
               description: Description of the deposit service.
-            customizable_metadata_fields: # ToDo: Improve the decription of this field.
+            customizable_metadata_fields: # ToDo: Improve the description of this field.
               type: object
               description: Customization object to change metadata fields.
         required_fields:
@@ -2337,9 +2495,6 @@ components:
           description: Link to the workflow itself
           example: |
             'http://storm-ws.server/projects/{project-id}/workflows/{workflow-id}'
-    
-    
-    
 
     # Execution links
     ExecutionLinkModel:
@@ -2508,20 +2663,28 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ExceptionType'
+            type: object
             properties:
-              status: 403
-              message: Unauthorized access.
+              status:
+                type: integer
+                example: 403
+              message:
+                type: string
+                example: Unauthorized access.
 
     BadRequestError:
       description: The return for actions which user don't use the required input/object format.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ExceptionType'
+            type: object
             properties:
-              status: 400
-              message: A validation error occurred
+              status:
+                type: integer
+                example: 400
+              message:
+                type: string
+                example: A validation error occurred
               errors:
                 type: array
                 items:
@@ -2536,6 +2699,33 @@ components:
                       items:
                         type: string
                       example: [ 'Missing data for required field' ]
+
+    InternalServerError:
+      description: The return for when users access a broken feature in the service.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 500
+              message:
+                type: string
+                example: Internal Server Error occurs
+
+    NotFoundError:
+      description: The return for when users access an invalid/non exist resource in the service.
+      content:
+        application/json:
+          schema:
+            properties:
+              status:
+                type: integer
+                example: 404
+              message:
+                type: string
+                example: Resource not found
 
     BinaryResponseBody:
       description: 'Binary file'
