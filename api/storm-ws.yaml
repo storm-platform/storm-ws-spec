@@ -62,7 +62,7 @@ paths:
       tags:
         - Research Project
       summary: Create a new Research Project
-      description: Create a new Research Project
+      description: Create a new Research Project.
 
       requestBody:
         $ref: '#/components/requestBodies/ProjectDefinitionModelRequestBody'
@@ -94,7 +94,7 @@ paths:
       tags:
         - Research Project
       summary: Edit a project
-      description: Edit a specific project if it is available for the current user
+      description: Edit a specific project if it is available for the current user.
       requestBody:
         $ref: '#/components/requestBodies/ProjectDefinitionModelRequestBody'
       responses:
@@ -219,11 +219,11 @@ paths:
       - $ref: '#/components/parameters/project_id'
 
     # exception: To search published execution compendia, the user use the root endpoint (`/compendia`).
-    #            > We made this to make the search more easier.
+    #            > We made this to make the search easier.
     get:
       tags:
         - Execution Compendium (Published)
-      summary: Search execution compendia.
+      summary: Search execution compendia
       description: |
         Retrieve all execution compendia published inside the project.
       responses:
@@ -239,7 +239,7 @@ paths:
     post:
       tags:
         - Execution Compendium (Draft)
-      summary: Create a new Execution Compendium draft.
+      summary: Create a new Execution Compendium draft
       description: |
         Create a new Execution Compendium draft inside the project. Only the 
         user working in the compendium can manage it.
@@ -265,7 +265,7 @@ paths:
     post:
       tags:
         - Execution Compendium (Published)
-      summary: Edit the metadata of a published Execution Compendium.
+      summary: Edit the metadata of a published Execution Compendium
       description: |
         Create a new draft from an already published Execution 
         Compendium. The draft  created can be used to edit the 
@@ -324,8 +324,8 @@ paths:
     delete:
       tags:
         - Execution Compendium (Draft)
-      summary: Delete an Execution Compendium Draft.
-      description: Delete the Execution Compendium Draft if user has Owner role
+      summary: Delete an Execution Compendium Draft
+      description: Delete the Execution Compendium Draft if user has Owner role.
       responses:
         '200':
           description: Deleted
@@ -347,7 +347,7 @@ paths:
     get:
       tags:
         - Execution Compendium (Draft Files)
-      summary: Read the defined files for the Execution Compendium draft.
+      summary: Read the defined files from the Execution Compendium draft
       description: |
         Retrieve the metadata of the files defined/uploaded in 
         the Execution Compendium draft.
@@ -362,7 +362,7 @@ paths:
     post:
       tags:
         - Execution Compendium (Draft Files)
-      summary: Define a file in the Execution Compendium Draft.
+      summary: Define files in the Execution Compendium Draft
       description: |
         Define which files will be uploaded to the service to be part of 
         the Execution Compendium Draft.
@@ -389,7 +389,7 @@ paths:
     get:
       tags:
         - Execution Compendium (Draft Files)
-      summary: Read file metadata.
+      summary: Read file metadata
       description: Retrieve the complete metadata from the Execution Compendium Draft file.
       responses:
         '200':
@@ -400,7 +400,7 @@ paths:
     delete:
       tags:
         - Execution Compendium (Draft Files)
-      summary: Delete a file.
+      summary: Delete a file
       description: |
         Delete a file and its content from a Execution Compendium Draft file.
       responses:
@@ -416,7 +416,7 @@ paths:
     get:
       tags:
         - Execution Compendium (Draft Files)
-      summary: Download file.
+      summary: Download file
       description: Download the content of the Execution Compendium file.
       responses:
         '200':
@@ -433,7 +433,7 @@ paths:
     put:
       tags:
         - Execution Compendium (Draft Files)
-      summary: Upload file to the Execution Compendium Draft.
+      summary: Upload file to the Execution Compendium Draft
       description: |
         Upload the content of a file defined in the Execution Compendium Draft.
       requestBody:
@@ -459,7 +459,7 @@ paths:
     post:
       tags:
         - Execution Compendium (Draft Files)
-      summary: Commit a file content.
+      summary: Commit a file content
       description: |
         Commit a file content from an Execution Compendium Draft. A commited file is 
         registered in the service. In the commit type, metadata like `checksum`, `file size` and
@@ -486,7 +486,7 @@ paths:
     post:
       tags:
         - Execution Compendium (Draft actions)
-      summary: Publish a Execution Compendium Draft
+      summary: Publish an Execution Compendium Draft
       description: |
         Create a new Execution Compendium version, publish it and 
         make it available to other users in the project.
@@ -515,7 +515,7 @@ paths:
     get:
       tags:
         - Execution Compendium (Published)
-      summary: Read an Execution Compendium Draft.
+      summary: Read an Execution Compendium Draft
       description: Retrieve the Execution Compendium metadata.
       responses:
         '200':
@@ -538,7 +538,7 @@ paths:
     get:
       tags:
         - Execution Compendium (Published - Files)
-      summary: Read the defined files for the Execution Compendium.
+      summary: Read the defined files for the Execution Compendium
       description: Retrieve the metadata of the files defined/uploaded in the Execution Compendium.
       responses:
         '200':
@@ -559,7 +559,7 @@ paths:
     get:
       tags:
         - Execution Compendium (Published - Files)
-      summary: Read file metadata.
+      summary: Read file metadata
       description: Retrieve the complete metadata from the Execution Compendium file.
       responses:
         '200':
@@ -580,7 +580,7 @@ paths:
     get:
       tags:
         - Execution Compendium (Files)
-      summary: Download file.
+      summary: Download file
       description: Download the content of the Execution Compendium file.
       responses:
         '200':
@@ -636,7 +636,7 @@ paths:
     get:
       tags:
         - Execution Compendium (Published - Versions)
-      summary: Read the latest version of the Execution Compendium.
+      summary: Read the latest version of the Execution Compendium
       description: |
         Retrieve the metadata of the latest published Execution Compendium.
       responses:
@@ -747,7 +747,7 @@ paths:
     get:
       tags:
         - Research Workflow
-      summary: Read the Research Workflow.
+      summary: Read the Research Workflow
       description: Retrieve metadata of the Research Workflow.
       responses:
         '200':
@@ -783,7 +783,7 @@ paths:
     delete:
       tags:
         - Research Workflow
-      summary: Delete the Research Workflow.
+      summary: Delete the Research Workflow
       description: Delete the Research Workflow from the Project.
       responses:
         '200':
@@ -804,7 +804,7 @@ paths:
     post:
       tags:
         - Research Workflow (Actions)
-      summary: Add Execution Compendium.
+      summary: Add Execution Compendium
       description: Add an already published Execution Compendium to the Research Workflow.
       responses:
         '200':
@@ -825,7 +825,7 @@ paths:
     delete:
       tags:
         - Research Workflow (Actions)
-      summary: Remove Execution Compendium.
+      summary: Remove Execution Compendium
       description: Remove an Execution Compendium from the Research Workflow.
       responses:
         '200':
@@ -881,7 +881,7 @@ paths:
     delete:
       tags:
         - Research Workflow (Administration Actions)
-      summary: Remove a contributor from the Research Workflow.
+      summary: Remove a contributor from the Research Workflow
       description: |
         Remove a user contributor from the Research Workflow.
       responses:
@@ -917,7 +917,7 @@ paths:
     get:
       tags:
         - Execution
-      summary: Search Execution Job.
+      summary: Search Execution Job
       description: |
         Retrieve Execution Job available for the authenticated user in the project.
       responses:
@@ -934,8 +934,8 @@ paths:
       tags:
         - Execution
       summary: |
-        Create Execution Job. This job is used to rerun a complete Research 
-        Workflow and reproduce its results.
+        Create an Execution Job. This job is used to rerun a complete Research 
+        Workflow and reproduce its results
       description: |
         Create a new Execution Job.
       requestBody:
@@ -960,7 +960,7 @@ paths:
     get:
       tags:
         - Execution
-      summary: Read Execution Job.
+      summary: Read an Execution Job
       description: |
         Retrieve the metadata from the Execution Job selected.
       responses:
@@ -976,7 +976,7 @@ paths:
     put:
       tags:
         - Execution
-      summary: Update Execution Job.
+      summary: Update an Execution Job
       description: |
         Update an Execution Job metadata. User can only update the following fields: `workflow-id` and `service`.
       requestBody:
@@ -996,7 +996,7 @@ paths:
     delete:
       tags:
         - Execution
-      summary: Delete Execution Job
+      summary: Delete an Execution Job
       description: |
         Remove the Execution Job from the Research Project.
       responses:
@@ -1035,7 +1035,7 @@ paths:
         - Execution (Actions)
       summary: Start the Execution Job
       description: |
-        Start the execution of the Job.
+        Start the execution of the Execution Job.
       responses:
         '200':
           $ref: '#/components/responses/ExecutionCreatedModelResponseBody'
@@ -1077,7 +1077,7 @@ paths:
     get:
       tags:
         - Deposit
-      summary: Search Deposit Job.
+      summary: Search Deposit Job
       description: |
         Retrieve Deposit Jobs available for the authenticated user in the project.
       responses:
@@ -1094,7 +1094,7 @@ paths:
       tags:
         - Deposit
       summary: |
-        Create an Deposit Job.
+        Create an Deposit Job
       description: |
         Create a new Deposit Job. This job is used to deposit Research Workflows 
         in dissemination services (e.g., Zenodo).
@@ -1173,7 +1173,7 @@ paths:
     get:
       tags:
         - Deposit (Services)
-      summary: List available Deposit services.
+      summary: List available Deposit services
       description: |
         Retrieve metadata of the services available in the instance to 
         deposit an Research Workflow and it's data.
