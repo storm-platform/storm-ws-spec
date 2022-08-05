@@ -38,8 +38,9 @@ SpatioTemporal Open Research Manager Web Service `OpenAPI 3.0 specification <htt
 Repository Organization
 =======================
 
-- `api <./api>`_: Storm WS Specification using `OpenAPI 3.0 <https://github.com/OAI/OpenAPI-Specification>`_.
+- `api <./api>`_: Storm WS Specification using `OpenAPI 3.0 <https://github.com/OAI/OpenAPI-Specification>`_;
 
+- `example <./example>`_: `Insomnia <https://insomnia.rest/>`_-based example of using the implementation of the specification provided by the `Storm WS <https://github.com/storm-platform/storm-ws>`_ package.
 
 Building the Documentation
 ==========================
