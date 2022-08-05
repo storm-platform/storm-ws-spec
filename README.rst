@@ -33,7 +33,7 @@ SpatioTemporal Open Research Manager Web Service - Specification
 About
 =====
 
-`OpenAPI 3.0 specification <https://github.com/OAI/OpenAPI-Specification>`_ SpatioTemporal Open Research Manager Web Service.
+SpatioTemporal Open Research Manager Web Service `OpenAPI 3.0 specification <https://github.com/OAI/OpenAPI-Specification>`_.
 
 Repository Organization
 =======================
