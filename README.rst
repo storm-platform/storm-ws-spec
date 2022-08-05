@@ -33,12 +33,13 @@ SpatioTemporal Open Research Manager Web Service - Specification
 About
 =====
 
-ToDo
+`OpenAPI 3.0 specification <https://github.com/OAI/OpenAPI-Specification>`_ SpatioTemporal Open Research Manager Web Service.
 
 Repository Organization
 =======================
 
-ToDo
+- `api <./api>`_: Storm WS Specification using `OpenAPI 3.0 <https://github.com/OAI/OpenAPI-Specification>`_.
+
 
 Building the Documentation
 ==========================
