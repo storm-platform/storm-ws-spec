@@ -10,7 +10,7 @@ info:
   version: '0.1.0'
   contact:
     name: Felipe Carlos
-    email: felipe.carlos@inpe.br
+    email: efelipecarlos@gmail.com
 
   license:
     name: MIT
@@ -1748,7 +1748,8 @@ components:
               type: array
               items:
                 type: string
-                example: [ 'Subject 1', 'Subject 2' ]
+                example: 'Subject 1'
+              example: ['Subject 1', 'Subject 2']
               description: 'Project subjects'
             rights:
               type: array
@@ -2120,10 +2121,10 @@ components:
               format: 'date-time'
 
     ExecutionCompendiumPublishedModel: # Published model
-      $ref: '#/components/schemas/ExecutionCompendiumSystemModel'
-
-      title: Execution Compendium Published model
+      title: 'Execution Compendium Published model'
       description: 'Execution Compendium Published model'
+      allOf:
+        - $ref: '#/components/schemas/ExecutionCompendiumSystemModel'
 
     #
     # Files
@@ -2153,40 +2154,42 @@ components:
           description: 'Metadata extracted from the defined tile'
 
     ExecutionCompendiumFileEntryCommitedModel:
-      $ref: '#/components/schemas/ExecutionCompendiumFileEntryBaseModel'
+
 
       title: Execution Compendium File commited metadata model.
       description: 'Model with the extra fields generated when a file is commited in the service.'
-      type: object
-      properties:
-        checksum:
-          type: string
-          example: 'md5:60fe4b019cfa3809c83fc373fa4b0c48'
-          description: MD5 Checksum calculated from file uploaded when the file entity is commited.
-        mimetype:
-          type: string
-          example: 'application/vnd.autopackage'
-          description: Mimetype of the uploaded file.
-        file_id:
-          type: string
-          example: 'd7b328ec-9ce5-4df1-9791-0fd4002c23dd'
-          description: File ID generated internally.
-        bucket_id:
-          type: string
-          example: '1cfb52ce-6805-40e5-bb73-9c0ed53cbb59'
-          description: Bucket ID where the file content is stored internally.
-        size:
-          type: integer
-          example: 348506
-          description: File size in bytes.
-        storage_class:
-          type: string
-          example: 'S'
-          description: 'Class of the usage storage to connect to the bucket'
-        version_id:
-          type: string
-          example: '3e9adb0e-b123-41aa-a083-a0a40a45f928'
-          description: 'File version ID'
+      allOf:
+        - $ref: '#/components/schemas/ExecutionCompendiumFileEntryBaseModel'
+        - type: object
+          properties:
+            checksum:
+              type: string
+              example: 'md5:60fe4b019cfa3809c83fc373fa4b0c48'
+              description: MD5 Checksum calculated from file uploaded when the file entity is commited.
+            mimetype:
+              type: string
+              example: 'application/vnd.autopackage'
+              description: Mimetype of the uploaded file.
+            file_id:
+              type: string
+              example: 'd7b328ec-9ce5-4df1-9791-0fd4002c23dd'
+              description: File ID generated internally.
+            bucket_id:
+              type: string
+              example: '1cfb52ce-6805-40e5-bb73-9c0ed53cbb59'
+              description: Bucket ID where the file content is stored internally.
+            size:
+              type: integer
+              example: 348506
+              description: File size in bytes.
+            storage_class:
+              type: string
+              example: 'S'
+              description: 'Class of the usage storage to connect to the bucket'
+            version_id:
+              type: string
+              example: '3e9adb0e-b123-41aa-a083-a0a40a45f928'
+              description: 'File version ID'
 
     ExecutionCompendiumFilesDefinitionModel:
       title: Execution Compendium files metadata model.
@@ -2452,9 +2455,9 @@ components:
       oneOf:
         - $ref: '#/components/schemas/ExecutionCompendiumFileLinkBaseModel'
         - $ref: '#/components/schemas/ExecutionCompendiumFileLinkBaseModel'
-          type: object
-          title: Execution Compendium File Link uncommited
-          description: Link model for files uncommited in the sistem. In this case, the user can commit the file.
+        - type: object
+          title: 'Execution Compendium File Link uncommited'
+          description: 'Link model for files uncommited in the sistem. In this case, the user can commit the file.'
           properties:
             commit:
               type: string
