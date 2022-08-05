@@ -10,6 +10,10 @@
 SpatioTemporal Open Research Manager Web Service - Specification
 ================================================================
 
+.. image:: https://img.shields.io/badge/run-Insomnia-blueviolet
+        :target: https://insomnia.rest/run/?label=Storm%20WS%20implementation%20example&uri=https%3A%2F%2Fraw.githubusercontent.com%2Fstorm-platform%2Fstorm-ws-spec%2Fmaster%2Fexample%2Fstorm-ws-insomnia.json
+        :alt: Run in Insomnia
+
 .. image:: https://img.shields.io/badge/license-MIT-green
         :target: https://github.com/storm-platform/storm-ws-spec/blob/master/LICENSE
         :alt: Software License
