@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "nodeFile": {
+    "description": "Node file definition.",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "type": {
+        "description": "File type",
+        "type": "string"
+      },
+      "key": {
+        "description": "File key identifier in the system",
+        "type": "string"
+      },
+      "checksum": {
+        "description": "File checksum",
+        "type": "string"
+      }
+    }
+  }
+}

@@ -1,0 +1,141 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "id": "local://workflow/workflow-v1.0.0.json",
+  "title": "Storm Workflow Schema v1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "$ref": "local://definitions-v1.0.0.json#/$schema"
+    },
+    "id": {
+      "$ref": "local://definitions-v1.0.0.json#/identifier"
+    },
+    "pid": {
+      "$ref": "local://definitions-v1.0.0.json#/internal-pid"
+    },
+    "is_finished": {
+      "type": "boolean",
+      "description": "Flag indicating that the project is finished."
+    },
+    "access": {
+      "description": "Resource access information",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "owned_by": {
+          "description": "List of record owners",
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "local://project/definitions-v1.0.0.json#/agent"
+          }
+        },
+        "contributed_by": {
+          "description": "List of record contributors",
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "local://project/definitions-v1.0.0.json#/agent"
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Resource metadata.",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "description": "Primary title of the record.",
+          "type": "string"
+        },
+        "description": {
+          "description": "Description for record (may contain HTML).",
+          "type": "string"
+        },
+        "version": {
+          "description": "Record version tag.",
+          "type": "string"
+        }
+      }
+    },
+    "graph": {
+      "type": "object",
+      "description": "Workflow graph.",
+      "additionalProperties": false,
+      "properties": {
+        "directed": {
+          "description": "Flag indicating whether the graph is directed.",
+          "type": "boolean"
+        },
+        "type": {
+          "description": "Graph type.",
+          "type": "string"
+        },
+        "nodes": {
+          "description": "List of graph nodes",
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "metadata": {
+                "description": "Node metadata",
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "files": {
+                    "description": "List of files available in the node.",
+                    "type": "array",
+                    "items": {
+                      "$ref": "local://workflow/definitions-v1.0.0.json#/nodeFile"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "edges": {
+          "description": "List of graph edges",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "source": {
+                "description": "Source property references the key value of the source node object. Its value is defined as a JSON string.",
+                "type": "string"
+              },
+              "target": {
+                "description": "Node ID target in the graph edge relationship.",
+                "type": "string"
+              },
+              "metadata": {
+                "description": "Edge metadata",
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "related_files": {
+                    "description": "Key of the file used by the system to create the edge between the nodes",
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "key": {
+                          "description": "File key identifier",
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

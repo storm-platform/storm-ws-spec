@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "id": "local://records/compendiumparent-v1.0.0.json",
+  "title": "Storm-Compendium Parent Record Schema v1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "description": "JSONSchema declaration.",
+      "type": "string"
+    },
+    "id": {
+      "description": "Persistent record identifier (alphanumeric).",
+      "type": "string"
+    },
+    "pid": {
+      "$ref": "local://definitions-v1.0.0.json#/internal-pid"
+    },
+    "access": {
+      "description": "Resource access information",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "owned_by": {
+          "description": "List of record owners",
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "local://project/definitions-v1.0.0.json#/agent"
+          }
+        },
+        "contributed_by": {
+          "description": "List of record contributors",
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "local://project/definitions-v1.0.0.json#/agent"
+          }
+        }
+      }
+    }
+  }
+}
