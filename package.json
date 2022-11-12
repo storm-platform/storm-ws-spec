@@ -9,6 +9,7 @@
   "author": "Felipe Menino Carlos",
   "license": "MIT",
   "dependencies": {
+    "react-is": "^18.2.0",
     "redoc-cli": "^0.13.14"
   }
 }

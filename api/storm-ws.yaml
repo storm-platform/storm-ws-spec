@@ -19,7 +19,11 @@ info:
   x-logo:
     url: ../assets/logo-storm.png
     altText: Storm Platform web site
-    href: 'https://storm-platform.github.io'
+    href: 'https://storm-platform.org/'
+
+servers:
+  - url: 'https://storm-platform.org/ws/api'
+    description: Production server
 
 paths:
   /:
